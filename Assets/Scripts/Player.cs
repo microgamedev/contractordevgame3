@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,14 +25,17 @@ public class Player : MonoBehaviour
 
     private float playerSpeedZ = 5f;
     private float playerSpeedFast = 11f;
-
-    private float playerTiltSpeed = 35f;
     private float playerTiltAngle = 30f;
+    private float playerDynamicsSmoothTime = 0.05f;
+    private float playerTiltPower = 2.0f;
+    private float playerTiltSensetivity = 10.0f;
+    private float playerTiltResetSpeed = 3.0f;
 
     public List<GameObject> snakeParts = new List<GameObject>();
 
-    private float touchPositionStart, touchPositionNow, playerOriginalX, playerNowX, playerNowRotation;
-
+    private float touchPositionStart, touchPositionNow, lastTouchPosition;
+    private float playerOriginalX, playerTargetX, playerNowX, playerVelocityX;
+    private float  playerTargetRotation, playerRotationVelocity, playerNowRotation;
     private bool isStart = false;
     private bool isDead = false;
     private bool isStop = false;
@@ -81,44 +85,40 @@ public class Player : MonoBehaviour
         }
         touchPositionStart = mainCamera.ScreenPointToRay(Input.mousePosition).GetPoint(cameraRaycast).x;
         playerOriginalX = transform.position.x;
+        lastTouchPosition = touchPositionStart;
     }
 
     private void PlayerMove()
     {
         touchPositionNow = mainCamera.ScreenPointToRay(Input.mousePosition).GetPoint(cameraRaycast).x;
-        playerNowX = playerOriginalX + (touchPositionNow - touchPositionStart);
-        playerNowX = Mathf.Clamp(playerNowX, -moveLimitX, moveLimitX);
+        playerTargetX = playerOriginalX + (touchPositionNow - touchPositionStart);
+        playerTargetX = Mathf.Clamp(playerTargetX, -moveLimitX, moveLimitX);
 
-        playerNowRotation += (touchPositionNow - touchPositionStart);
-        playerNowRotation = Mathf.Clamp(playerNowRotation, -playerTiltAngle, playerTiltAngle);
+        playerTargetRotation += (touchPositionNow - lastTouchPosition) * playerTiltSensetivity; 
+        playerTargetRotation = Mathf.Clamp(playerTargetRotation, -1f, 1f);
+        lastTouchPosition = touchPositionNow;
     }
 
     private void PlayerRun()
     {
         float tempZ = transform.position.z + (Time.fixedDeltaTime * playerSpeedZ);
-
         if (isFinish)
         {
-            playerNowX = 0f;
+            playerTargetX = 0f;
         }
 
         // For Test Only
         // --------------
         tempZ = 0f;
         // --------------
-
+        playerNowX = Mathf.SmoothDamp(playerNowX, playerTargetX, ref playerVelocityX, playerDynamicsSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
         rb.MovePosition(new Vector3(playerNowX, 0f, tempZ));
+        playerTargetRotation = Mathf.MoveTowards(playerTargetRotation, 0f,  Time.fixedDeltaTime * playerTiltResetSpeed);
+        playerNowRotation = Mathf.SmoothDamp(playerNowRotation, playerTargetRotation, ref playerRotationVelocity, playerDynamicsSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
 
-        if(playerNowRotation < 0f)
-        {
-            playerNowRotation += Time.fixedDeltaTime * playerTiltSpeed;
-        }
-        else if (playerNowRotation > 0f)
-        {
-            playerNowRotation -= Time.fixedDeltaTime * playerTiltSpeed;
-        }
+        float playerRotation =Mathf.Pow(Mathf.Abs(playerNowRotation), playerTiltPower) * Mathf.Sign(playerNowRotation);
 
-        rb.rotation = Quaternion.Euler(0f, 0f, playerNowRotation);
+        rb.rotation = Quaternion.Euler(0f, 0f, playerRotation * playerTiltAngle);
 
         if (snakeParts.Count > 1)
         {
