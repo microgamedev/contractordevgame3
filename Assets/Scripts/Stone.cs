@@ -1,9 +1,7 @@
 using UnityEngine;
-using DG.Tweening;
 
 public class Stone : MonoBehaviour
 {
-
     [SerializeField] ParticleSystem stoneFX;
     [SerializeField] GameObject snakeSegment;
     private Player player;
@@ -22,6 +20,11 @@ public class Stone : MonoBehaviour
         {
             isTouch = true;
 
+            GameObject _snakeSegment = Instantiate(snakeSegment);
+            _snakeSegment.GetComponent<SnakeSegment>().AddToStone();
+            _snakeSegment.transform.SetParent(transform, false);
+            _snakeSegment.transform.position = other.GetContact(0).point;
+
             gameObject.layer = LayerMask.NameToLayer("NoCollider");
             rb.isKinematic = false;
             rb.AddForce(0f, -0.25f, 0.5f, ForceMode.Impulse);
@@ -30,10 +33,7 @@ public class Stone : MonoBehaviour
 
             player.StoneTouch();
 
-            GameObject _snakeSegment = Instantiate(snakeSegment);
-            _snakeSegment.GetComponent<SnakeSegment>().AddToStone();
-            _snakeSegment.transform.SetParent(transform, false);
-            _snakeSegment.transform.position = other.GetContact(0).point;
+
         }
     }
 }

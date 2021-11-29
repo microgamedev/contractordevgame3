@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] Rigidbody rb;
     [SerializeField] Camera mainCamera;
-    private float cameraRaycast = 15f;
+    private float cameraRaycast = 10f;
     private float moveLimitX = 1.75f;
 
     [Space]
@@ -21,9 +21,9 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject playerGFX;
     [SerializeField] TextMeshPro snakePartsCountText;
 
-    private float snakePartDistance = 0.1f;
+    private float snakePartDistance = 0.125f;
 
-    private float playerSpeedZ = 5f;
+    private float playerSpeedZ = 6f;
     private float playerSpeedFast = 11f;
     private float playerTiltAngle = 30f;
     private float playerDynamicsSmoothTime = 0.05f;
@@ -65,7 +65,6 @@ public class Player : MonoBehaviour
                 PlayerMove();
             }
         }
-
     }
 
     private void FixedUpdate()
@@ -129,7 +128,7 @@ public class Player : MonoBehaviour
             {
                 Vector3 _tempPos = snakeParts[i - 1].transform.position;
                 _tempPos.z -= snakePartDistance;
-                snakeParts[i].transform.position = Vector3.Lerp(snakeParts[i].transform.position, _tempPos, Time.fixedDeltaTime * 20f);
+                snakeParts[i].transform.position = Vector3.Lerp(snakeParts[i].transform.position, _tempPos, Time.fixedDeltaTime * 10f);
                 snakeParts[i].transform.rotation = Quaternion.Lerp(snakeParts[i].transform.rotation, snakeParts[i - 1].transform.rotation, Time.fixedDeltaTime * 20f);
             }
         }
@@ -143,8 +142,6 @@ public class Player : MonoBehaviour
 
     public void SnakeSegmentAdd(GameObject newPart)
     {
-        newPart.GetComponent<SnakeSegment>().AddToSnake();
-
         Vector3 newPartPosition = snakeParts[snakeParts.Count - 1].transform.position;
         newPartPosition.z -= snakePartDistance;
         newPart.transform.position = newPartPosition;
@@ -187,11 +184,6 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("SnakeSegment"))
-        {
-            SnakeSegmentAdd(other.gameObject);
-        }
-
         if(other.CompareTag("Finish") && !isFinish)
         {
             playerSpeedZ = playerSpeedFast;
@@ -200,39 +192,34 @@ public class Player : MonoBehaviour
 
         if (other.CompareTag("Bamboo"))
         {
-            if(!other.GetComponent<Bamboo>().isSliced)
+            other.GetComponent<Bamboo>().BambooShowFX();
+
+            bambooCount++;
+
+            if(bambooCount >= 3)
             {
-                other.GetComponentInChildren<ParticleSystem>().Play();
-
-                bambooCount++;
-
-                if(bambooCount >= 3)
-                {
-                    coinManager.CoinsAdd(transform.position, 1);
-                    bambooCount = 0;
-                }
-
-
-                var sliceable = other.GetComponent<IBzSliceable>();
-                Plane plane = new Plane(transform.up, (-transform.position.y + 0.05f));
-                sliceable.Slice(plane, r =>
-                {
-                    if (!r.sliced)
-                    {
-                        return;
-                    }
-
-                    r.outObjectPos.gameObject.GetComponent<Bamboo>().Sliced(true);
-                    r.outObjectNeg.gameObject.GetComponent<Bamboo>().Sliced(false);
-                }
-                );
+                coinManager.CoinsAdd(transform.position, 1);
+                bambooCount = 0;
             }
+
+            var sliceable = other.GetComponent<IBzSliceable>();
+            Plane plane = new Plane(transform.up, (-transform.position.y + 0.05f));
+            sliceable.Slice(plane, r =>
+            {
+                if (!r.sliced)
+                {
+                    return;
+                }
+
+                r.outObjectPos.gameObject.GetComponent<Bamboo>().Sliced(true);
+                r.outObjectNeg.gameObject.GetComponent<Bamboo>().Sliced(false);
+            }
+            );
         }
     }
 
     public void EnemyRunKill(GameObject enemy)
     {
-        //gameManager.SlowMoStart();
         coinManager.CoinsAdd(transform.position, 5);
 
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);

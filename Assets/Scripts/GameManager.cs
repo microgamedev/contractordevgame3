@@ -78,9 +78,7 @@ public class GameManager : MonoBehaviour
 
     public void ShowSnakeFX(Vector3 _position)
     {
-        Vector3 _pos = _position;
-        _pos.y += 1f;
-        snakeFX.gameObject.transform.position = _pos;
+        snakeFX.gameObject.transform.position = _position;
         snakeFX.Play();
     }
 
@@ -104,7 +102,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator SlowMoStop()
     {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.125f);
         Time.timeScale = 1f;
         Time.fixedDeltaTime = 0.02f;
     }

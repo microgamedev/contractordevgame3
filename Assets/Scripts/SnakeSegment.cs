@@ -4,6 +4,7 @@ using BzKovSoft.ObjectSlicer;
 public class SnakeSegment : MonoBehaviour
 {
     private SphereCollider sphereCollider;
+    private Animation _animation;
     private Player player;
     private bool isActive = true;
 
@@ -11,6 +12,7 @@ public class SnakeSegment : MonoBehaviour
     {
         player = FindObjectOfType<Player>();
         sphereCollider = GetComponent<SphereCollider>();
+        _animation = GetComponentInChildren<Animation>();
     }
 
     public void AddToSnake()
@@ -26,6 +28,7 @@ public class SnakeSegment : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("NoCollider");
         isActive = false;
         sphereCollider.enabled = false;
+        _animation.enabled = false;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -47,6 +50,8 @@ public class SnakeSegment : MonoBehaviour
                 r.outObjectNeg.gameObject.GetComponent<Bamboo>().Sliced(false);
             }
             );
+
+            Debug.Log(1);
         }
 
         if(isActive)

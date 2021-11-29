@@ -20,7 +20,7 @@ public class Bamboo : MonoBehaviour
     public void Sliced(bool _bounce)
     {
         gameObject.layer = LayerMask.NameToLayer("NoCollider");
-        Destroy(gameObject, 2f);
+        Destroy(gameObject, 3f);
 
         if (_bounce)
         {
