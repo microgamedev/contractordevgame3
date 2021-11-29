@@ -38,7 +38,7 @@ public class SnakePart : MonoBehaviour
 
         if (other.CompareTag("SnakePart"))
         {
-            player.NewSnakePart(other.gameObject);
+            player.AddSnakePart(other.gameObject);
         }
     }
 }

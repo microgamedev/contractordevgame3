@@ -110,9 +110,9 @@ GameObject:
   - component: {fileID: 3371259937619852101}
   - component: {fileID: 375620598329527888}
   - component: {fileID: 4288122075279949220}
-  m_Layer: 14
+  m_Layer: 8
   m_Name: Snake_Part
-  m_TagString: SnakePart
+  m_TagString: SnakeSegment
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

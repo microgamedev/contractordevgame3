@@ -9,31 +9,33 @@ public class Player : MonoBehaviour
 {
     [SerializeField] Rigidbody rb;
     [SerializeField] Camera mainCamera;
+    private float cameraRaycast = 15f;
+    private float moveLimitX = 1.75f;
 
     [Space]
     [SerializeField] GameManager gameManager;
     [SerializeField] CoinManager coinManager;
 
     [Space]
-    [SerializeField] GameObject snakePartPrefab;
     [SerializeField] GameObject playerGFX;
     [SerializeField] TextMeshPro snakePartsCountText;
 
-    private float cameraRaycast = 15f;
-    private float moveLimitX = 1.75f;
     private float snakePartDistance = 0.1f;
+
     private float playerSpeedZ = 5f;
     private float playerSpeedFast = 11f;
 
     private float playerTiltSpeed = 35f;
     private float playerTiltAngle = 30f;
+
     public List<GameObject> snakeParts = new List<GameObject>();
 
     private float touchPositionStart, touchPositionNow, playerOriginalX, playerNowX, playerNowRotation;
 
-    private bool isTouch = false;
-    private bool isPreFinish = false;
-    private bool isTilt = false;
+    private bool isStart = false;
+    private bool isDead = false;
+    private bool isStop = false;
+    private bool isFinish = false;
 
     private int bambooCount;
 
@@ -47,20 +49,24 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !isPreFinish)
+        if(!isDead || !isFinish)
         {
-            PlayerMoveStart();
+            if (Input.GetMouseButtonDown(0))
+            {
+                PlayerMoveStart();
+            }
+
+            if (Input.GetMouseButton(0))
+            {
+                PlayerMove();
+            }
         }
 
-        if (Input.GetMouseButton(0) && !isPreFinish)
-        {
-            PlayerMove();
-        }
     }
 
     private void FixedUpdate()
     {
-        if(isTouch)
+        if(isStart && !isStop)
         {
             PlayerRun();
         }
@@ -68,10 +74,10 @@ public class Player : MonoBehaviour
 
     private void PlayerMoveStart()
     {
-        if (!isTouch)
+        if (!isStart)
         {
             gameManager.HideHowToPlay();
-            isTouch = true;
+            isStart = true;
         }
         touchPositionStart = mainCamera.ScreenPointToRay(Input.mousePosition).GetPoint(cameraRaycast).x;
         playerOriginalX = transform.position.x;
@@ -91,11 +97,16 @@ public class Player : MonoBehaviour
     {
         float tempZ = transform.position.z + (Time.fixedDeltaTime * playerSpeedZ);
 
-        if (isPreFinish)
+        if (isFinish)
         {
             playerNowX = 0f;
         }
+
+        // For Test Only
+        // --------------
         tempZ = 0f;
+        // --------------
+
         rb.MovePosition(new Vector3(playerNowX, 0f, tempZ));
 
         if(playerNowRotation < 0f)
@@ -123,74 +134,39 @@ public class Player : MonoBehaviour
 
     private void PlayerStop()
     {
-        isTouch = false;
+        isStop = true;
         rb.velocity = Vector3.zero;
     }
 
-    public void AddSnakePart(GameObject _newPart, int count)
+    public void SnakeSegmentAdd(GameObject newPart)
     {
-        GameObject newPart;
+        newPart.GetComponent<SnakePart>().AddToSnake();
 
-        for (int i = 0; i < count; i++)
-        {
-            if (_newPart == null)
-            {
-                newPart = Instantiate(snakePartPrefab);
-            }
-            else
-            {
-                newPart = _newPart;
-            }
+        Vector3 newPartPosition = snakeParts[snakeParts.Count - 1].transform.position;
+        newPartPosition.z -= snakePartDistance;
+        newPart.transform.position = newPartPosition;
 
-            newPart.GetComponent<SnakePart>().AddToSnake();
+        snakeParts.Add(newPart);
 
-            Vector3 newPartPosition = snakeParts[snakeParts.Count - 1].transform.position;
-            newPartPosition.z -= snakePartDistance;
-            newPart.transform.position = newPartPosition;
-
-            snakeParts.Add(newPart);
-
-            HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
-        }
+        ShowSnakeFX();
+        ShowSnakeFXText("+1");
+        HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
 
         SnakePartsTextUpdate();
     }
 
-    public void RemoveSnakePart(int count)
+    public void SnakeSegmentRemove()
     {
-        if(!isPreFinish)
+        if(snakeParts.Count > 1)
         {
-            if(count >= snakeParts.Count)
-            {
-                count = snakeParts.Count - 1;
-            }
-
-            if(count > 0)
-            {
-                ShowSnakeFXText("-" + count);
-
-                for (int i = 0; i < count; i++)
-                {
-                    GameObject _part = snakeParts[snakeParts.Count - 1];
-                    snakeParts.Remove(_part);
-                    Destroy(_part);
-                }
-            }
+            ShowSnakeFXText("-1");
+            GameObject _part = snakeParts[snakeParts.Count - 1];
+            snakeParts.Remove(_part);
+            Destroy(_part);
         }
-
-        if(isPreFinish)
+        else
         {
-            if(snakeParts.Count > 1)
-            {
-                ShowSnakeFXText("-1");
-                GameObject _part = snakeParts[snakeParts.Count - 1];
-                snakeParts.Remove(_part);
-                Destroy(_part);
-            }
-            else
-            {
-                PlayerDeath();
-            }
+            PlayerDead();
         }
 
         SnakePartsTextUpdate();
@@ -200,43 +176,23 @@ public class Player : MonoBehaviour
     {
         snakePartsCountText.text = "" + snakeParts.Count;
 
-        if (isPreFinish && snakeParts.Count == 1)
+        if (isDead)
         {
             snakePartsCountText.text = "";
         }
     }
 
-    public void NewSnakePart(GameObject _part)
-    {
-        ShowSnakeFX();
-        ShowSnakeFXText("+1");
-        AddSnakePart(_part, 1);
-    }
-
-    public void AllyAdd(GameObject _ally)
-    {
-        _ally.GetComponent<Ally>().AllyMake();
-        _ally.transform.SetParent(transform, true);
-    }
-
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("SnakePart"))
+        if (other.CompareTag("SnakeSegment"))
         {
-            NewSnakePart(other.gameObject);
+            SnakeSegmentAdd(other.gameObject);
         }
 
-        if (other.CompareTag("Ally"))
-        {
-            AllyAdd(other.gameObject);
-            
-        }
-
-        if(other.CompareTag("PreFinish") && !isPreFinish)
+        if(other.CompareTag("Finish") && !isFinish)
         {
             playerSpeedZ = playerSpeedFast;
-            isPreFinish = true;
-            isTouch = true;
+            isFinish = true;
         }
 
         if (other.CompareTag("Bamboo"))
@@ -276,8 +232,6 @@ public class Player : MonoBehaviour
         //gameManager.SlowMoStart();
         coinManager.CoinsAdd(transform.position, 5);
 
-        NewSnakePart(null);
-
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
 
         StartCoroutine(EnemyRunKillSlice(enemy));
@@ -304,7 +258,7 @@ public class Player : MonoBehaviour
 
     public void EnemyStandKill(GameObject enemy)
     {
-        RemoveSnakePart(1);
+        SnakeSegmentRemove();
         coinManager.CoinsAdd(transform.position, 5);
 
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
@@ -330,7 +284,7 @@ public class Player : MonoBehaviour
 
         gameManager.isBossKill = true;
         gameManager.SlowMoStart();
-        RemoveSnakePart(1);
+        SnakeSegmentRemove();
         coinManager.CoinsAdd(transform.position, 20);
 
         gameManager.GameFinish(transform.position.z);
@@ -340,7 +294,7 @@ public class Player : MonoBehaviour
 
     public void StoneTouch()
     {
-        RemoveSnakePart(1);
+        SnakeSegmentRemove();
         gameManager.SlowMoStart();
     }
 
@@ -354,8 +308,10 @@ public class Player : MonoBehaviour
         gameManager.ShowSnakeFXText(transform.position, _text);
     }
 
-    private void PlayerDeath()
+    private void PlayerDead()
     {
+        isDead = true;
+
         PlayerStop();
 
         playerGFX.SetActive(false);

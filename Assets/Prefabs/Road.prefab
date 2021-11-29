@@ -118,7 +118,7 @@ GameObject:
   - component: {fileID: 2790570273013009875}
   - component: {fileID: 2790570273013009874}
   - component: {fileID: 2790570273013009886}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: Road
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -225,5 +225,5 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 4.5, y: 2, z: 105}
-  m_Center: {x: 0, y: -1.01, z: 0}
+  m_Size: {x: 4.5, y: 2, z: 120}
+  m_Center: {x: 0, y: -2.01, z: 60}
