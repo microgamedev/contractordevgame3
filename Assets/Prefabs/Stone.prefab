@@ -92,7 +92,8 @@ GameObject:
   - component: {fileID: 8795729392746011367}
   - component: {fileID: 8168234411065000028}
   - component: {fileID: 7236318420139979668}
-  m_Layer: 0
+  - component: {fileID: 4772964038480965407}
+  m_Layer: 7
   m_Name: Stone
   m_TagString: Stone
   m_Icon: {fileID: 0}
@@ -142,6 +143,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stoneFX: {fileID: 8495431421567100587}
   shuriken: {fileID: 4248337744582844481, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
+--- !u!54 &4772964038480965407
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8168234411065000029}
+  serializedVersion: 2
+  m_Mass: 0.05
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &6539537303632415976
 PrefabInstance:
   m_ObjectHideFlags: 0

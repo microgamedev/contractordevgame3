@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
     public List<GameObject> snakeParts = new List<GameObject>();
 
     private float touchPositionStart, touchPositionNow, lastTouchPosition;
-    private float playerOriginalX, playerTargetX, playerNowX, playerVelocityX;
+    private float playerTargetX, playerNowX, playerVelocityX;
     private float  playerTargetRotation, playerRotationVelocity, playerNowRotation;
     private bool isStart = false;
     private bool isDead = false;
@@ -84,7 +84,7 @@ public class Player : MonoBehaviour
             isStart = true;
         }
         touchPositionStart = mainCamera.ScreenPointToRay(Input.mousePosition).GetPoint(cameraRaycast).x;
-        playerOriginalX = transform.position.x;
+
         lastTouchPosition = touchPositionStart;
     }
 
@@ -102,6 +102,7 @@ public class Player : MonoBehaviour
     private void PlayerRun()
     {
         float tempZ = transform.position.z + (Time.fixedDeltaTime * playerSpeedZ);
+
         if (isFinish)
         {
             playerTargetX = 0f;
@@ -111,12 +112,14 @@ public class Player : MonoBehaviour
         // --------------
         //tempZ = 0f;
         // --------------
+
         playerNowX = Mathf.SmoothDamp(playerNowX, playerTargetX, ref playerVelocityX, playerDynamicsSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
         rb.MovePosition(new Vector3(playerNowX, 0f, tempZ));
+
         playerTargetRotation = Mathf.MoveTowards(playerTargetRotation, 0f,  Time.fixedDeltaTime * playerTiltResetSpeed);
         playerNowRotation = Mathf.SmoothDamp(playerNowRotation, playerTargetRotation, ref playerRotationVelocity, playerDynamicsSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
 
-        float playerRotation =Mathf.Pow(Mathf.Abs(playerNowRotation), playerTiltPower) * Mathf.Sign(playerNowRotation);
+        float playerRotation = Mathf.Pow(Mathf.Abs(playerNowRotation), playerTiltPower) * Mathf.Sign(playerNowRotation);
 
         rb.rotation = Quaternion.Euler(0f, 0f, playerRotation * playerTiltAngle);
 

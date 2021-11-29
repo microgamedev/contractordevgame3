@@ -88,7 +88,7 @@ public class EnemyRun : MonoBehaviour
     {
         isDeath = true;
 
-        gameObject.layer = LayerMask.NameToLayer("Default");
+        gameObject.layer = LayerMask.NameToLayer("NoCollider");
 
         rb.isKinematic = false;
         rb.useGravity = true;
