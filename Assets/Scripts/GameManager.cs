@@ -1,0 +1,152 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using TMPro;
+using Lofelt.NiceVibrations;
+
+public class GameManager : MonoBehaviour
+{
+    [SerializeField] TextMeshProUGUI levelText;
+
+    [SerializeField] GameObject howToPlay;
+    [SerializeField] GameObject UI_Finish;
+
+    [Space]
+    [SerializeField] GameObject[] levelPrefab;
+
+    [Space]
+    [SerializeField] ParticleSystem finalConfettiFX;
+    [SerializeField] ParticleSystem snakeFX;
+    [SerializeField] GameObject snakeFXText;
+
+    [Space]
+    [SerializeField] GameObject[] bossPrefab;
+
+    private BossPosition bossPosition;
+    private int _bossCount;
+    [HideInInspector] public bool isBossKill = false;
+    [HideInInspector] public bool isFirstTouch = false;
+
+    private int Level;
+
+    private void Start()
+    {
+        Application.targetFrameRate = 60;
+
+        Level = PlayerPrefs.GetInt("level");
+        if(Level == 0)
+        {
+            PlayerPrefs.SetInt("level", 1);
+            Level = 1;
+        }
+        levelText.text = "LEVEL " + Level;
+
+        int _levelLoad = Level - 1;
+        if(_levelLoad > levelPrefab.Length - 1)
+        {
+            _levelLoad = Random.Range(2, levelPrefab.Length);
+        }
+
+        _levelLoad = 0;
+
+        Instantiate(levelPrefab[_levelLoad]);
+
+        howToPlay.SetActive(false);
+        StartCoroutine(ShowHowToPlay());
+
+        UI_Finish.SetActive(false);
+
+        //bossPosition = FindObjectOfType<BossPosition>();
+        //EnemyBossPosition();
+    }
+
+    private IEnumerator ShowHowToPlay()
+    {
+        yield return new WaitForSeconds(3f);
+        if(!isFirstTouch)
+        {
+            howToPlay.SetActive(true);
+        }
+    }
+
+    public void HideHowToPlay()
+    {
+        howToPlay.SetActive(false);
+        isFirstTouch = true;
+    }
+
+    public void ShowSnakeFX(Vector3 _position)
+    {
+        Vector3 _pos = _position;
+        _pos.y += 1f;
+        snakeFX.gameObject.transform.position = _pos;
+        snakeFX.Play();
+    }
+
+    public void ShowSnakeFXText(Vector3 _position, string _text)
+    {
+        Vector3 _pos = _position;
+        _pos.y += 0.35f;
+        _pos.z -= 0.5f;
+        GameObject _snakeFXText = Instantiate(snakeFXText, _pos, Quaternion.Euler(30f, 0, 0), transform);
+        _snakeFXText.GetComponent<TextMeshPro>().text = "" + _text;
+        Destroy(_snakeFXText, 1f);
+    }
+
+    public void SlowMoStart()
+    {
+        Time.timeScale = 0.25f;
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+
+        StartCoroutine(SlowMoStop());
+    }
+
+    private IEnumerator SlowMoStop()
+    {
+        yield return new WaitForSeconds(0.1f);
+        Time.timeScale = 1f;
+        Time.fixedDeltaTime = 0.02f;
+    }
+
+    private void EnemyBossPosition()
+    {
+        _bossCount = PlayerPrefs.GetInt("boss");
+
+        if(_bossCount > bossPrefab.Length - 1)
+        {
+            _bossCount = Random.Range(0, bossPrefab.Length);
+        }
+
+        GameObject _boss = Instantiate(bossPrefab[_bossCount]);
+        _boss.transform.position = bossPosition.gameObject.transform.position;
+    }
+
+    public void GameFinish(float positionZ)
+    {
+        if(isBossKill)
+        {
+            PlayerPrefs.SetInt("boss", _bossCount + 1);
+        }
+
+        PlayerPrefs.SetInt("level", Level + 1);
+
+        finalConfettiFX.gameObject.transform.position = new Vector3(0f, 4f, positionZ);
+        finalConfettiFX.Play();
+
+        StartCoroutine(GameFinishUI());
+    }
+
+    private IEnumerator GameFinishUI()
+    {
+        yield return new WaitForSeconds(2.5f);
+        HapticPatterns.PlayPreset(HapticPatterns.PresetType.Success);
+
+        UI_Finish.SetActive(true);
+    }
+
+    public void GameRestart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
+    }
+}
