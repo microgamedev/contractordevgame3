@@ -140,7 +140,7 @@ public class Player : MonoBehaviour
 
     public void SnakeSegmentAdd(GameObject newPart)
     {
-        newPart.GetComponent<SnakePart>().AddToSnake();
+        newPart.GetComponent<SnakeSegment>().AddToSnake();
 
         Vector3 newPartPosition = snakeParts[snakeParts.Count - 1].transform.position;
         newPartPosition.z -= snakePartDistance;

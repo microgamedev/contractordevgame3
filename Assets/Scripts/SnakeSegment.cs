@@ -1,7 +1,7 @@
 using UnityEngine;
 using BzKovSoft.ObjectSlicer;
 
-public class SnakePart : MonoBehaviour
+public class SnakeSegment : MonoBehaviour
 {
     private Player player;
 
@@ -38,7 +38,7 @@ public class SnakePart : MonoBehaviour
 
         if (other.CompareTag("SnakePart"))
         {
-            player.AddSnakePart(other.gameObject);
+            player.SnakeSegmentAdd(other.gameObject);
         }
     }
 }
