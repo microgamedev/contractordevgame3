@@ -91,7 +91,7 @@ public class Player : MonoBehaviour
     private void PlayerMove()
     {
         touchPositionNow = mainCamera.ScreenPointToRay(Input.mousePosition).GetPoint(cameraRaycast).x;
-        playerTargetX = playerOriginalX + (touchPositionNow - touchPositionStart);
+        playerTargetX += (touchPositionNow - lastTouchPosition);
         playerTargetX = Mathf.Clamp(playerTargetX, -moveLimitX, moveLimitX);
 
         playerTargetRotation += (touchPositionNow - lastTouchPosition) * playerTiltSensetivity; 
