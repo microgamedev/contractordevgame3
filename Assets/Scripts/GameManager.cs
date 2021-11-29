@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
 
         _levelLoad = 0;
 
-        Instantiate(levelPrefab[_levelLoad]);
+        //Instantiate(levelPrefab[_levelLoad]);
 
         howToPlay.SetActive(false);
         StartCoroutine(ShowHowToPlay());

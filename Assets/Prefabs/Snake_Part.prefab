@@ -108,9 +108,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2883607833525751766}
   - component: {fileID: 3371259937619852101}
-  - component: {fileID: 375620598329527888}
   - component: {fileID: 4288122075279949220}
-  m_Layer: 8
+  - component: {fileID: 375620598329527888}
+  m_Layer: 7
   m_Name: Snake_Part
   m_TagString: SnakeSegment
   m_Icon: {fileID: 0}
@@ -145,18 +145,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.3
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &375620598329527888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4248337744582844481}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff278e06829a140f6b9ea395c95ce561, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!54 &4288122075279949220
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -173,3 +161,16 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 48
   m_CollisionDetection: 0
+--- !u!114 &375620598329527888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4248337744582844481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff278e06829a140f6b9ea395c95ce561, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sphereCollider: {fileID: 3371259937619852101}
