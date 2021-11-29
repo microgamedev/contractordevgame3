@@ -3,18 +3,30 @@ using BzKovSoft.ObjectSlicer;
 
 public class SnakeSegment : MonoBehaviour
 {
+    [SerializeField] SphereCollider sphereCollider;
     private Player player;
+    private bool isActive = true;
 
     public void AddToSnake()
     {
-        gameObject.layer = LayerMask.NameToLayer("Snake");
-        transform.tag = "Snake";
-        player = FindObjectOfType<Player>();
+        if(isActive)
+        {
+            gameObject.layer = LayerMask.NameToLayer("Snake");
+            transform.tag = "Snake";
+            player = FindObjectOfType<Player>();
+        }
+    }
+
+    public void AddToStone()
+    {
+        gameObject.layer = LayerMask.NameToLayer("Solid");
+        isActive = false;
+        sphereCollider.enabled = false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Bamboo"))
+        if (other.CompareTag("Bamboo") && isActive)
         {
             if (!other.GetComponent<Bamboo>().isSliced)
             {
@@ -36,7 +48,7 @@ public class SnakeSegment : MonoBehaviour
             }
         }
 
-        if (other.CompareTag("SnakePart"))
+        if (other.CompareTag("SnakePart") && isActive)
         {
             player.SnakeSegmentAdd(other.gameObject);
         }

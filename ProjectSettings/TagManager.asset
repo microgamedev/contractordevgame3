@@ -15,16 +15,16 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
-  - Solid
-  - Snake
-  - SnakeSegment
-  - Player
-  - Enemy
-  - Bamboo
-  - BambooSliced
+  - NoCollider
+  - YesCollider
+  - 
+  - 
+  - 
+  - 
+  - 
   - 
   - 
   - 

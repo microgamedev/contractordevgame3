@@ -104,7 +104,7 @@ public class Player : MonoBehaviour
 
         // For Test Only
         // --------------
-        tempZ = 0f;
+        //tempZ = 0f;
         // --------------
 
         rb.MovePosition(new Vector3(playerNowX, 0f, tempZ));
