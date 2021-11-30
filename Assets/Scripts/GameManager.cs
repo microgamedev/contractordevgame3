@@ -23,7 +23,6 @@ public class GameManager : MonoBehaviour
     [Space]
     [SerializeField] GameObject[] bossPrefab;
 
-    private BossPosition bossPosition;
     private int _bossCount;
     [HideInInspector] public bool isBossKill = false;
     [HideInInspector] public bool isFirstTouch = false;
@@ -56,9 +55,6 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ShowHowToPlay());
 
         UI_Finish.SetActive(false);
-
-        //bossPosition = FindObjectOfType<BossPosition>();
-        //EnemyBossPosition();
     }
 
     private IEnumerator ShowHowToPlay()
@@ -105,19 +101,6 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.125f);
         Time.timeScale = 1f;
         Time.fixedDeltaTime = 0.02f;
-    }
-
-    private void EnemyBossPosition()
-    {
-        _bossCount = PlayerPrefs.GetInt("boss");
-
-        if(_bossCount > bossPrefab.Length - 1)
-        {
-            _bossCount = Random.Range(0, bossPrefab.Length);
-        }
-
-        GameObject _boss = Instantiate(bossPrefab[_bossCount]);
-        _boss.transform.position = bossPosition.gameObject.transform.position;
     }
 
     public void GameFinish(float positionZ)

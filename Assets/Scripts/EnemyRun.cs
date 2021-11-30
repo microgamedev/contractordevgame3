@@ -3,8 +3,7 @@ using UnityEngine;
 
 public class EnemyRun : MonoBehaviour
 {
-    [SerializeField] float enemyRunSpeed;
-    [SerializeField] GameObject shurikenPrefab;
+    private float enemyRunSpeed = 4;
     private Rigidbody rb;
     private Player player;
     private Animator enemyAnimator;
@@ -16,7 +15,11 @@ public class EnemyRun : MonoBehaviour
     {
         player = FindObjectOfType<Player>();
         rb = GetComponent<Rigidbody>();
-        enemyAnimator = GetComponent<Animator>();
+
+        if(GetComponent<Animator>() != null)
+        {
+            enemyAnimator = GetComponent<Animator>();
+        }
     }
 
     private void FixedUpdate()
@@ -44,7 +47,7 @@ public class EnemyRun : MonoBehaviour
 
     private void ReadyToRun()
     {
-        if(transform.position.z - player.gameObject.transform.position.z < 8f)
+        if(transform.position.z - player.gameObject.transform.position.z < 6f)
         {
             RunAway();
         }
@@ -77,19 +80,17 @@ public class EnemyRun : MonoBehaviour
         {
             if(!isDeath)
             {
-                Death();
-
-                //player.EnemyRunKill(gameObject);
+                isDeath = true;
+                player.EnemyRunKill(gameObject);
             }
         }
     }
 
-    public void DeadStart(bool _bounce)
+    public void EnemyDeath(bool _bounce)
     {
-        isDeath = true;
-
         gameObject.layer = LayerMask.NameToLayer("NoCollider");
 
+        isDeath = true;
         rb.isKinematic = false;
         rb.useGravity = true;
 
@@ -97,14 +98,7 @@ public class EnemyRun : MonoBehaviour
 
         if (_bounce)
         {
-            rb.AddForce(new Vector3(Random.Range(0.25f, 0.5f), 1f, Random.Range(0.25f, 0.5f)) * 0.3f, ForceMode.Impulse);
+            rb.AddForce(new Vector3(Random.Range(0.25f, 0.5f), 1f, Random.Range(0.25f, 0.5f)) * 0.5f, ForceMode.Impulse);
         }
-    }
-
-    private void Death()
-    {
-        isDeath = true;
-        Destroy(shurikenPrefab);
-        enemyAnimator.SetBool("Death", true);
     }
 }

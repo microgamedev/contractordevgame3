@@ -24,7 +24,6 @@ public class Player : MonoBehaviour
     private float snakePartDistance = 0.125f;
 
     private float playerSpeedZ = 7f;
-    private float playerSpeedFast = 11f;
     private float playerTiltAngle = 30f;
     private float playerDynamicsSmoothTime = 0.05f;
     private float playerTiltPower = 2.0f;
@@ -186,9 +185,8 @@ public class Player : MonoBehaviour
     {
         if(other.CompareTag("Finish") && !isFinish)
         {
-            //playerSpeedZ = playerSpeedFast;
             isFinish = true;
-            EnemyBossKill();
+            FinishGate();
         }
 
         if (other.CompareTag("Bamboo"))
@@ -262,13 +260,30 @@ public class Player : MonoBehaviour
         );
     }
 
-    public void EnemyBossKill()
+    public void EnemyRunKill(GameObject enemy)
+    {
+        coinManager.CoinsAdd(transform.position, 5);
+
+        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
+
+        var sliceable = enemy.GetComponent<IBzSliceable>();
+        Plane plane = new Plane(transform.up, (-transform.position.y + 0.05f));
+        sliceable.Slice(plane, r =>
+        {
+            if (!r.sliced)
+            {
+                return;
+            }
+
+            r.outObjectPos.gameObject.GetComponent<EnemyRun>().EnemyDeath(true);
+            r.outObjectNeg.gameObject.GetComponent<EnemyRun>().EnemyDeath(false);
+        }
+        );
+    }
+
+    public void FinishGate()
     {
         PlayerStop();
-
-        //gameManager.isBossKill = true;
-        //gameManager.SlowMoStart();
-        //SnakeSegmentRemove();
         coinManager.CoinsAdd(transform.position, 20);
 
         gameManager.GameFinish(transform.position.z);
