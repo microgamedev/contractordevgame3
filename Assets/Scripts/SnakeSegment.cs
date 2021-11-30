@@ -50,8 +50,6 @@ public class SnakeSegment : MonoBehaviour
                 r.outObjectNeg.gameObject.GetComponent<Bamboo>().Sliced(false);
             }
             );
-
-            Debug.Log(1);
         }
 
         if(isActive)
