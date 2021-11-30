@@ -44,7 +44,7 @@ public class CoinManager : MonoBehaviour
         for (int i = 0; i < maxCoins; i++)
         {
             coin = Instantiate(coinPrefab);
-            coin.transform.SetParent(coinTarget.transform, false);
+            coin.transform.SetParent(coinTarget.transform, true);
             coin.SetActive(false);
             coinsQueue.Enqueue(coin);
         }

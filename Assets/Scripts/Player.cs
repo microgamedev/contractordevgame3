@@ -10,8 +10,8 @@ public class Player : MonoBehaviour
 {
     [SerializeField] Rigidbody rb;
     [SerializeField] Camera mainCamera;
-    private float cameraRaycast = 10f;
-    private float moveLimitX = 1.75f;
+    private float cameraRaycast = 11f;
+    private float moveLimitX = 1.5f;
 
     [Space]
     [SerializeField] GameManager gameManager;
@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
 
     private float snakePartDistance = 0.125f;
 
-    private float playerSpeedZ = 6f;
+    private float playerSpeedZ = 7f;
     private float playerSpeedFast = 11f;
     private float playerTiltAngle = 30f;
     private float playerDynamicsSmoothTime = 0.05f;
@@ -186,8 +186,9 @@ public class Player : MonoBehaviour
     {
         if(other.CompareTag("Finish") && !isFinish)
         {
-            playerSpeedZ = playerSpeedFast;
+            //playerSpeedZ = playerSpeedFast;
             isFinish = true;
+            EnemyBossKill();
         }
 
         if (other.CompareTag("Bamboo"))
@@ -203,7 +204,7 @@ public class Player : MonoBehaviour
             }
 
             var sliceable = other.GetComponent<IBzSliceable>();
-            Plane plane = new Plane(transform.up, (-transform.position.y + 0.05f));
+            Plane plane = new Plane(transform.up, (-transform.position.y + 0.1f));
             sliceable.Slice(plane, r =>
             {
                 if (!r.sliced)
@@ -216,39 +217,32 @@ public class Player : MonoBehaviour
             }
             );
         }
-    }
 
-    public void EnemyRunKill(GameObject enemy)
-    {
-        coinManager.CoinsAdd(transform.position, 5);
-
-        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
-
-        StartCoroutine(EnemyRunKillSlice(enemy));
-    }
-
-    private IEnumerator EnemyRunKillSlice(GameObject enemy)
-    {
-        yield return new WaitForSeconds(0.05f);
-
-        var sliceable = enemy.GetComponent<IBzSliceable>();
-        Plane plane = new Plane(transform.up, (-transform.position.y + 0.05f));
-        sliceable.Slice(plane, r =>
+        if (other.CompareTag("Lamp"))
         {
-            if (!r.sliced)
-            {
-                return;
-            }
+            other.GetComponent<Lamp>().LampShowFX();
 
-            r.outObjectPos.gameObject.GetComponent<EnemyRun>().DeadStart(true);
-            r.outObjectNeg.gameObject.GetComponent<EnemyRun>().DeadStart(false);
+            coinManager.CoinsAdd(transform.position, 3);
+
+            var sliceable = other.GetComponent<IBzSliceable>();
+            Plane plane = new Plane(transform.up, transform.position.y + 0.3f);
+            sliceable.Slice(plane, r =>
+            {
+                if (!r.sliced)
+                {
+                    return;
+                }
+
+                r.outObjectPos.gameObject.GetComponent<Lamp>().Sliced(true);
+                r.outObjectNeg.gameObject.GetComponent<Lamp>().Sliced(false);
+            }
+            );
         }
-        );
+
     }
 
     public void EnemyStandKill(GameObject enemy)
     {
-        SnakeSegmentRemove();
         coinManager.CoinsAdd(transform.position, 5);
 
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
@@ -262,8 +256,8 @@ public class Player : MonoBehaviour
                 return;
             }
 
-            r.outObjectPos.gameObject.GetComponent<EnemyStand>().DeadStart(true);
-            r.outObjectNeg.gameObject.GetComponent<EnemyStand>().DeadStart(false);
+            r.outObjectPos.gameObject.GetComponent<Enemy>().DeadStart(true);
+            r.outObjectNeg.gameObject.GetComponent<Enemy>().DeadStart(false);
         }
         );
     }
@@ -272,9 +266,9 @@ public class Player : MonoBehaviour
     {
         PlayerStop();
 
-        gameManager.isBossKill = true;
-        gameManager.SlowMoStart();
-        SnakeSegmentRemove();
+        //gameManager.isBossKill = true;
+        //gameManager.SlowMoStart();
+        //SnakeSegmentRemove();
         coinManager.CoinsAdd(transform.position, 20);
 
         gameManager.GameFinish(transform.position.z);
@@ -285,6 +279,7 @@ public class Player : MonoBehaviour
     public void StoneTouch()
     {
         SnakeSegmentRemove();
+        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
         gameManager.SlowMoStart();
     }
 

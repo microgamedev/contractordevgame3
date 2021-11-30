@@ -79,7 +79,7 @@ public class EnemyRun : MonoBehaviour
             {
                 Death();
 
-                player.EnemyRunKill(gameObject);
+                //player.EnemyRunKill(gameObject);
             }
         }
     }

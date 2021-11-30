@@ -18,6 +18,7 @@ public class SnakeSegment : MonoBehaviour
     public void AddToSnake()
     {
         isActive = false;
+        transform.rotation = Quaternion.Euler(0f, 0f, 0f);
         gameObject.layer = LayerMask.NameToLayer("Player");
         transform.tag = "Snake";
         player.SnakeSegmentAdd(gameObject);

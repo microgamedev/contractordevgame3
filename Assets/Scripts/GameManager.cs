@@ -137,7 +137,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator GameFinishUI()
     {
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(0.5f);
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.Success);
 
         UI_Finish.SetActive(true);

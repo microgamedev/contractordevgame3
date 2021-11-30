@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 1091122166663124529}
   m_LocalRotation: {x: 0.7071068, y: -0.7071068, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 2.5, z: 2.5}
+  m_LocalScale: {x: 3.5, y: 2.5, z: 2.5}
   m_Children: []
   m_Father: {fileID: 2883607833525751766}
   m_RootOrder: 0
@@ -124,14 +124,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4248337744582844481}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5585896895801320459}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!135 &3371259937619852101
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -173,4 +173,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff278e06829a140f6b9ea395c95ce561, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sphereCollider: {fileID: 3371259937619852101}
