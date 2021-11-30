@@ -12,6 +12,7 @@ TagManager:
   - Snake
   - SnakeSegment
   - Lamp
+  - FinishWall
   layers:
   - Default
   - TransparentFX

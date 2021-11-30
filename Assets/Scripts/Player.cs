@@ -23,7 +23,10 @@ public class Player : MonoBehaviour
 
     private float snakePartDistance = 0.125f;
 
-    private float playerSpeedZ = 7f;
+    private float playerSpeedZ;
+    private float playerSpeedPlay = 7f;
+    private float playerSpeedFinishEnter = 2f;
+    private float playerSpeedFinishExit = 12f;
     private float playerTiltAngle = 30f;
     private float playerDynamicsSmoothTime = 0.05f;
     private float playerTiltPower = 2.0f;
@@ -38,7 +41,8 @@ public class Player : MonoBehaviour
     private bool isStart = false;
     private bool isDead = false;
     private bool isStop = false;
-    private bool isFinish = false;
+    private bool isFinishEnter = false;
+    private bool isFinishExit = false;
 
     private int bambooCount;
 
@@ -47,21 +51,28 @@ public class Player : MonoBehaviour
         snakeParts.Add(gameObject);
         SnakePartsTextUpdate();
 
+        playerSpeedZ = playerSpeedPlay;
         bambooCount = 0;
     }
 
     private void Update()
     {
-        if(!isDead || !isFinish)
+        if(!isDead || !isFinishExit)
         {
             if (Input.GetMouseButtonDown(0))
             {
-                PlayerMoveStart();
+                if (!isFinishEnter)
+                {
+                    PlayerMoveStart();
+                }
             }
 
             if (Input.GetMouseButton(0))
             {
-                PlayerMove();
+                if (!isFinishEnter)
+                {
+                    PlayerMove();
+                }
             }
         }
     }
@@ -100,11 +111,6 @@ public class Player : MonoBehaviour
     private void PlayerRun()
     {
         float tempZ = transform.position.z + (Time.fixedDeltaTime * playerSpeedZ);
-
-        if (isFinish)
-        {
-            playerTargetX = 0f;
-        }
 
         // For Test Only
         // --------------
@@ -175,7 +181,7 @@ public class Player : MonoBehaviour
     {
         snakePartsCountText.text = "" + snakeParts.Count;
 
-        if (isDead)
+        if (isDead || isFinishEnter)
         {
             snakePartsCountText.text = "";
         }
@@ -183,60 +189,81 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Finish") && !isFinish)
+        if(other.CompareTag("Finish") && !isFinishEnter)
         {
-            isFinish = true;
-            FinishGate();
+            FinishEnter();
+        }
+
+        if (other.CompareTag("FinishWall"))
+        {
+            FinishWall();
         }
 
         if (other.CompareTag("Bamboo"))
         {
-            other.GetComponent<Bamboo>().BambooShowFX();
-
-            bambooCount++;
-
-            if(bambooCount >= 3)
-            {
-                coinManager.CoinsAdd(transform.position, 1);
-                bambooCount = 0;
-            }
-
-            var sliceable = other.GetComponent<IBzSliceable>();
-            Plane plane = new Plane(transform.up, (-transform.position.y + 0.1f));
-            sliceable.Slice(plane, r =>
-            {
-                if (!r.sliced)
-                {
-                    return;
-                }
-
-                r.outObjectPos.gameObject.GetComponent<Bamboo>().Sliced(true);
-                r.outObjectNeg.gameObject.GetComponent<Bamboo>().Sliced(false);
-            }
-            );
+            SliceBamboo(other.gameObject);
         }
 
         if (other.CompareTag("Lamp"))
         {
-            other.GetComponent<Lamp>().LampShowFX();
+            SliceLamp(other.gameObject);
+        }
+    }
 
-            coinManager.CoinsAdd(transform.position, 3);
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.CompareTag("Finish") && isFinishEnter && !isFinishExit)
+        {
+            FinishExit();
+        }
+    }
 
-            var sliceable = other.GetComponent<IBzSliceable>();
-            Plane plane = new Plane(transform.up, transform.position.y + 0.3f);
-            sliceable.Slice(plane, r =>
-            {
-                if (!r.sliced)
-                {
-                    return;
-                }
+    public void SliceBamboo(GameObject _bamboo)
+    {
+        _bamboo.GetComponent<Bamboo>().BambooShowFX();
 
-                r.outObjectPos.gameObject.GetComponent<Lamp>().Sliced(true);
-                r.outObjectNeg.gameObject.GetComponent<Lamp>().Sliced(false);
-            }
-            );
+        bambooCount++;
+
+        if (bambooCount >= 3)
+        {
+            coinManager.CoinsAdd(transform.position, 1);
+            bambooCount = 0;
         }
 
+        var sliceable = _bamboo.GetComponent<IBzSliceable>();
+        Plane plane = new Plane(transform.up, (-transform.position.y + 0.1f));
+        sliceable.Slice(plane, r =>
+        {
+            if (!r.sliced)
+            {
+                return;
+            }
+
+            r.outObjectPos.gameObject.GetComponent<Bamboo>().Sliced(true);
+            r.outObjectNeg.gameObject.GetComponent<Bamboo>().Sliced(false);
+        }
+        );
+    }
+
+    public void SliceLamp(GameObject _lamp)
+    {
+        _lamp.GetComponent<Lamp>().LampShowFX();
+
+        coinManager.CoinsAdd(transform.position, 3);
+
+        var sliceable = _lamp.GetComponent<IBzSliceable>();
+        Plane plane = new Plane(transform.up, transform.position.y + 0.3f);
+        sliceable.Slice(plane, r =>
+        {
+            if (!r.sliced)
+            {
+                return;
+            }
+
+            r.outObjectPos.gameObject.GetComponent<Lamp>().Sliced(true);
+            r.outObjectNeg.gameObject.GetComponent<Lamp>().Sliced(false);
+        }
+        );
     }
 
     public void EnemyStandKill(GameObject enemy)
@@ -281,14 +308,29 @@ public class Player : MonoBehaviour
         );
     }
 
-    public void FinishGate()
+    public void FinishEnter()
+    {
+        isFinishEnter = true;
+        playerSpeedZ = playerSpeedFinishEnter;
+
+        mainCamera.GetComponent<CameraFollow>().FinishGate();
+        SnakePartsTextUpdate();
+        HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
+    }
+
+    public void FinishExit()
+    {
+        isFinishExit = true;
+        playerSpeedZ = playerSpeedFinishExit;
+
+        HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
+    }
+
+    public void FinishWall()
     {
         PlayerStop();
-        coinManager.CoinsAdd(transform.position, 20);
-
         gameManager.GameFinish(transform.position.z);
-
-        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
+        HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
     }
 
     public void StoneTouch()

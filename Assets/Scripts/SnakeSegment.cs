@@ -36,24 +36,15 @@ public class SnakeSegment : MonoBehaviour
     {
         if (other.CompareTag("Bamboo"))
         {
-            other.GetComponentInChildren<ParticleSystem>().Play();
-
-            var sliceable = other.GetComponent<IBzSliceable>();
-            Plane plane = new Plane(transform.up, (-transform.position.y + 0.05f));
-            sliceable.Slice(plane, r =>
-            {
-                if (!r.sliced)
-                {
-                    return;
-                }
-
-                r.outObjectPos.gameObject.GetComponent<Bamboo>().Sliced(true);
-                r.outObjectNeg.gameObject.GetComponent<Bamboo>().Sliced(false);
-            }
-            );
+            player.SliceBamboo(other.gameObject);
         }
 
-        if(isActive)
+        if (other.CompareTag("Lamp"))
+        {
+            player.SliceLamp(other.gameObject);
+        }
+
+        if (isActive)
         {
             if (other.CompareTag("Snake") || other.CompareTag("Player"))
             {
