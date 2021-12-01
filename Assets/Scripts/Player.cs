@@ -109,12 +109,16 @@ public class Player : MonoBehaviour
         lastTouchPosition = touchPositionNow;
     }
 
+
+    // -------------------------------------------------
     private void PlayerMoveFinish()
     {
         touchPositionNow = mainCamera.ScreenPointToRay(Input.mousePosition).GetPoint(cameraRaycast).x;
         playerTargetX += (touchPositionNow - lastTouchPosition);
         playerTargetX = Mathf.Clamp(playerTargetX, -moveLimitX, moveLimitX);
     }
+    // -------------------------------------------------
+
 
     private void PlayerRun()
     {
@@ -143,6 +147,9 @@ public class Player : MonoBehaviour
                 }
             }
         }
+
+        // -------------------------------------------------
+        // Horizontal snake
 
         if(isFinishEnter)
         {
@@ -178,6 +185,8 @@ public class Player : MonoBehaviour
                 }
             }
         }
+
+        // -------------------------------------------------
     }
 
     private void PlayerStop()
