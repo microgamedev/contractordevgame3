@@ -61,10 +61,7 @@ public class Player : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                if (!isFinishEnter)
-                {
-                    PlayerMoveStart();
-                }
+                PlayerMoveStart();
             }
 
             if (Input.GetMouseButton(0))
@@ -72,6 +69,10 @@ public class Player : MonoBehaviour
                 if (!isFinishEnter)
                 {
                     PlayerMove();
+                }
+                else if(isFinishEnter)
+                {
+                    PlayerMoveFinish();
                 }
             }
         }
@@ -108,33 +109,73 @@ public class Player : MonoBehaviour
         lastTouchPosition = touchPositionNow;
     }
 
+    private void PlayerMoveFinish()
+    {
+        touchPositionNow = mainCamera.ScreenPointToRay(Input.mousePosition).GetPoint(cameraRaycast).x;
+        playerTargetX += (touchPositionNow - lastTouchPosition);
+        playerTargetX = Mathf.Clamp(playerTargetX, -moveLimitX, moveLimitX);
+    }
+
     private void PlayerRun()
     {
         float tempZ = transform.position.z + (Time.fixedDeltaTime * playerSpeedZ);
 
-        // For Test Only
-        // --------------
-        //tempZ = 0f;
-        // --------------
-
-        playerNowX = Mathf.SmoothDamp(playerNowX, playerTargetX, ref playerVelocityX, playerDynamicsSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
-        rb.MovePosition(new Vector3(playerNowX, 0f, tempZ));
-
-        playerTargetRotation = Mathf.MoveTowards(playerTargetRotation, 0f,  Time.fixedDeltaTime * playerTiltResetSpeed);
-        playerNowRotation = Mathf.SmoothDamp(playerNowRotation, playerTargetRotation, ref playerRotationVelocity, playerDynamicsSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
-
-        float playerRotation = Mathf.Pow(Mathf.Abs(playerNowRotation), playerTiltPower) * Mathf.Sign(playerNowRotation);
-
-        rb.rotation = Quaternion.Euler(0f, 0f, playerRotation * playerTiltAngle);
-
-        if (snakeParts.Count > 1)
+        if(!isFinishEnter)
         {
-            for (int i = 1; i < snakeParts.Count; i++)
+            playerNowX = Mathf.SmoothDamp(playerNowX, playerTargetX, ref playerVelocityX, playerDynamicsSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
+            rb.MovePosition(new Vector3(playerNowX, 0f, tempZ));
+
+            playerTargetRotation = Mathf.MoveTowards(playerTargetRotation, 0f, Time.fixedDeltaTime * playerTiltResetSpeed);
+            playerNowRotation = Mathf.SmoothDamp(playerNowRotation, playerTargetRotation, ref playerRotationVelocity, playerDynamicsSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
+
+            float playerRotation = Mathf.Pow(Mathf.Abs(playerNowRotation), playerTiltPower) * Mathf.Sign(playerNowRotation);
+
+            rb.rotation = Quaternion.Euler(0f, 0f, playerRotation * playerTiltAngle);
+
+            if (snakeParts.Count > 1)
             {
-                Vector3 _tempPos = snakeParts[i - 1].transform.position;
-                _tempPos.z -= snakePartDistance;
-                snakeParts[i].transform.position = Vector3.Lerp(snakeParts[i].transform.position, _tempPos, Time.fixedDeltaTime * 10f);
-                snakeParts[i].transform.rotation = Quaternion.Lerp(snakeParts[i].transform.rotation, snakeParts[i - 1].transform.rotation, Time.fixedDeltaTime * 20f);
+                for (int i = 1; i < snakeParts.Count; i++)
+                {
+                    Vector3 _tempPos = snakeParts[i - 1].transform.position;
+                    _tempPos.z -= snakePartDistance;
+                    snakeParts[i].transform.position = Vector3.Lerp(snakeParts[i].transform.position, _tempPos, Time.fixedDeltaTime * 10f);
+                    snakeParts[i].transform.rotation = Quaternion.Lerp(snakeParts[i].transform.rotation, snakeParts[i - 1].transform.rotation, Time.fixedDeltaTime * 20f);
+                }
+            }
+        }
+
+        if(isFinishEnter)
+        {
+            // For Test Only
+            // --------------
+            tempZ = 127f;
+            // --------------
+
+            rb.MovePosition(new Vector3(0f, 0f, tempZ));
+
+            if (snakeParts.Count > 1)
+            {
+                int _count = 0;
+
+                for (int i = 1; i < snakeParts.Count; i++)
+                {
+                    Vector3 _tempPos = snakeParts[i - 1].transform.position;
+                    _count = i;
+                    if(_count % 2 == 0)
+                    {
+                        _tempPos.x += snakePartDistance + playerTargetX;
+                    }
+                    else
+                    {
+                        _tempPos.x -= snakePartDistance - playerTargetX;
+                    }
+
+                    _count++;
+
+                    snakeParts[i].transform.position = Vector3.Lerp(snakeParts[i].transform.position, _tempPos, Time.fixedDeltaTime * 10f);
+                    //snakeParts[i].transform.rotation = Quaternion.Lerp(snakeParts[i].transform.rotation, snakeParts[i - 1].transform.rotation, Time.fixedDeltaTime * 20f);
+
+                }
             }
         }
     }
