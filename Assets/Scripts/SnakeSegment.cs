@@ -18,18 +18,23 @@ public class SnakeSegment : MonoBehaviour
     public void AddToSnake()
     {
         isActive = false;
+        transform.SetParent(null);
         transform.rotation = Quaternion.Euler(0f, 0f, 0f);
         gameObject.layer = LayerMask.NameToLayer("Player");
         transform.tag = "Snake";
         player.SnakeSegmentAdd(gameObject);
     }
 
-    public void AddToStone()
+    public void SnakeSegmentIsInactive(bool isAnimation)
     {
         gameObject.layer = LayerMask.NameToLayer("NoCollider");
         isActive = false;
         sphereCollider.enabled = false;
-        _animation.enabled = false;
+
+        if (!isAnimation)
+        {
+            _animation.enabled = false;
+        }
     }
 
     private void OnTriggerEnter(Collider other)

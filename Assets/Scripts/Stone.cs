@@ -21,7 +21,7 @@ public class Stone : MonoBehaviour
             isTouch = true;
 
             GameObject _snakeSegment = Instantiate(snakeSegment);
-            _snakeSegment.GetComponent<SnakeSegment>().AddToStone();
+            _snakeSegment.GetComponent<SnakeSegment>().SnakeSegmentIsInactive(false);
             _snakeSegment.transform.SetParent(transform, false);
             _snakeSegment.transform.position = other.GetContact(0).point;
 

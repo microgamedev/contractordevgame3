@@ -747,7 +747,7 @@ GameObject:
   - component: {fileID: 800565973028501556}
   - component: {fileID: 6402019245853060550}
   m_Layer: 7
-  m_Name: EnemyStand
+  m_Name: EnemyStandFinish
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -761,7 +761,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3222847380870486635}
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -1, z: 0}
+  m_LocalPosition: {x: 0.01, y: -1, z: 41.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3222847380870317569}
@@ -853,7 +853,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abc0c7a0618ad40369b7582310da2899, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  snakeSegmentPrefab: {fileID: 8436084368195198217}
 --- !u!1 &3222847380870486637
 GameObject:
   m_ObjectHideFlags: 0
@@ -915,7 +914,6 @@ Transform:
   - {fileID: 3222847380870317601}
   - {fileID: 3222847380870317603}
   - {fileID: 3222847380870317627}
-  - {fileID: 7485964071832433310}
   m_Father: {fileID: 3222847380870317581}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1246,82 +1244,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1001 &5757815439644081480
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 3222847380870317583}
-    m_Modifications:
-    - target: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.181
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.003
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.002
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4248337744582844481, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-      propertyPath: m_Name
-      value: Snake_Segment
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
---- !u!1 &8436084368195198217 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4248337744582844481, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-  m_PrefabInstance: {fileID: 5757815439644081480}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &7485964071832433310 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2883607833525751766, guid: 009789e1cd503409e9416bf7af9bb37d, type: 3}
-  m_PrefabInstance: {fileID: 5757815439644081480}
-  m_PrefabAsset: {fileID: 0}

@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject UI_Finish;
 
     [Space]
+    [SerializeField] GameObject snakeSegmentPrefab;
+    public Queue<GameObject> snakeSegmentQueue = new Queue<GameObject>();
     [SerializeField] GameObject[] levelPrefab;
 
     [Space]
@@ -55,7 +57,28 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ShowHowToPlay());
 
         UI_Finish.SetActive(false);
+
+        SnakeSegmentsPrepare();
     }
+
+    private void SnakeSegmentsPrepare()
+    {
+        GameObject _snake;
+        for (int i = 0; i < 20; i++)
+        {
+            _snake = Instantiate(snakeSegmentPrefab);
+            _snake.SetActive(false);
+            snakeSegmentQueue.Enqueue(_snake);
+        }
+    }
+
+    public void SnakeSegmentAddToSnake()
+    {
+        GameObject newSnakeSegment = snakeSegmentQueue.Dequeue();
+        newSnakeSegment.SetActive(true);
+        newSnakeSegment.GetComponent<SnakeSegment>().AddToSnake();
+    }
+
 
     private IEnumerator ShowHowToPlay()
     {

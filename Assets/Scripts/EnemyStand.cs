@@ -1,12 +1,13 @@
 using UnityEngine;
 using System.Collections;
 
-public class Enemy : MonoBehaviour
+public class EnemyStand : MonoBehaviour
 {
     private Rigidbody rb;
     private Player player;
+    [SerializeField] GameObject snakeSegmentPrefab;
 
-    private bool isTouch = false;
+    private bool isDeath = false;
 
     private void Awake()
     {
@@ -14,21 +15,35 @@ public class Enemy : MonoBehaviour
         player = FindObjectOfType<Player>();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void Start()
     {
-        if ((other.CompareTag("Player") || other.CompareTag("Snake")) && !isTouch)
+        if (!isDeath)
         {
-            isTouch = true;
-            player.EnemyStandKill(gameObject);
+            snakeSegmentPrefab.GetComponent<SnakeSegment>().SnakeSegmentIsInactive(false);
         }
     }
 
-    public void DeadStart(bool _bounce)
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player") || other.CompareTag("Snake"))
+        {
+            if (!isDeath)
+            {
+                isDeath = true;
+                snakeSegmentPrefab.SetActive(false);
+                player.EnemyKillPlane(gameObject, true);
+            }
+        }
+    }
+
+    public void EnemyDeath(bool _bounce)
     {
         gameObject.layer = LayerMask.NameToLayer("NoCollider");
 
+        isDeath = true;
         rb.isKinematic = false;
         rb.useGravity = true;
+        snakeSegmentPrefab.SetActive(false);
 
         rb.AddTorque(new Vector3(Random.Range(0.25f, 0.5f), Random.Range(0.25f, 0.5f), Random.Range(0.25f, 0.5f)) * 0.5f, ForceMode.Impulse);
 

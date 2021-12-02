@@ -1,16 +1,17 @@
 using System.Collections;
 using UnityEngine;
 
-public class EnemyRun : MonoBehaviour
+public class EnemyRunCrowd : MonoBehaviour
 {
     private float enemyRunSpeed = 5f;
     private Rigidbody rb;
     private Player player;
     private Animator enemyAnimator;
-    [SerializeField] GameObject snakeSegmentPrefab;
 
+    public bool isChest = false;
     private bool isDeath = false;
     private bool isRun = false;
+    [SerializeField] GameObject chestObject;
 
     private void Awake()
     {
@@ -20,14 +21,6 @@ public class EnemyRun : MonoBehaviour
         if (GetComponent<Animator>() != null)
         {
             enemyAnimator = GetComponent<Animator>();
-        }
-    }
-
-    private void Start()
-    {
-        if(!isDeath)
-        {
-            snakeSegmentPrefab.GetComponent<SnakeSegment>().SnakeSegmentIsInactive(false);
         }
     }
 
@@ -92,8 +85,13 @@ public class EnemyRun : MonoBehaviour
             if(!isDeath)
             {
                 isDeath = true;
-                snakeSegmentPrefab.SetActive(false);
-                player.EnemyKillPlane(gameObject, true);
+
+                if(isChest)
+                {
+                    Destroy(chestObject);
+                }
+
+                player.EnemyKillPlane(gameObject, false);
             }
         }
     }
@@ -105,7 +103,8 @@ public class EnemyRun : MonoBehaviour
         isDeath = true;
         rb.isKinematic = false;
         rb.useGravity = true;
-        snakeSegmentPrefab.SetActive(false);
+
+        Destroy(chestObject);
 
         rb.AddTorque(new Vector3(Random.Range(0.25f, 0.5f), Random.Range(0.25f, 0.5f), Random.Range(0.25f, 0.5f)) * 0.5f, ForceMode.Impulse);
 

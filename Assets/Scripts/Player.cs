@@ -46,15 +46,12 @@ public class Player : MonoBehaviour
     private bool isFinishEnter = false;
     private bool isFinishExit = false;
 
-    private int bambooCount;
-
     private void Start()
     {
         snakeParts.Add(gameObject);
         SnakePartsTextUpdate();
 
         playerSpeedZ = playerSpeedPlay;
-        bambooCount = 0;
     }
 
     private void Update()
@@ -153,10 +150,6 @@ public class Player : MonoBehaviour
 
         if(isFinishEnter)
         {
-            // For Test Only
-            // --------------
-            //tempZ = 127f;
-            // --------------
             if(isFinishExit)
             {
                 playerSpeedPlay *= 10f;
@@ -177,7 +170,7 @@ public class Player : MonoBehaviour
                 float _stepNextX = playerTargetX;
                 float _stepX = playerTargetX;
 
-                float _stepZ = 0.2f;
+                float _stepZ = 0.15f;
 
                 for (int i = 1; i < snakeParts.Count; i++)
                 {
@@ -209,13 +202,13 @@ public class Player : MonoBehaviour
         rb.velocity = Vector3.zero;
     }
 
-    public void SnakeSegmentAdd(GameObject newPart)
+    public void SnakeSegmentAdd(GameObject newSnakeSegment)
     {
         Vector3 newPartPosition = snakeParts[snakeParts.Count - 1].transform.position;
         newPartPosition.z -= snakePartDistance;
-        newPart.transform.position = newPartPosition;
+        newSnakeSegment.transform.position = newPartPosition;
 
-        snakeParts.Add(newPart);
+        snakeParts.Add(newSnakeSegment);
 
         ShowSnakeFX();
         ShowSnakeFXText("+1");
@@ -286,13 +279,7 @@ public class Player : MonoBehaviour
     {
         _bamboo.GetComponent<Bamboo>().BambooShowFX();
 
-        bambooCount++;
-
-        if (bambooCount >= 3)
-        {
-            coinManager.CoinsAdd(transform.position, 1);
-            bambooCount = 0;
-        }
+        coinManager.CoinsAdd(transform.position, 1);
 
         var sliceable = _bamboo.GetComponent<IBzSliceable>();
         Plane plane = new Plane(transform.up, (-transform.position.y + 0.1f));
@@ -311,7 +298,12 @@ public class Player : MonoBehaviour
 
     public void SliceLamp(GameObject _lamp)
     {
-        _lamp.GetComponent<Lamp>().LampShowFX();
+        Lamp lamp = _lamp.GetComponent<Lamp>();
+        lamp.LampShowFX();
+        if(lamp.isActive)
+        {
+            lamp.isActive = false;
+        }
 
         coinManager.CoinsAdd(transform.position, 3);
 
@@ -330,32 +322,20 @@ public class Player : MonoBehaviour
         );
     }
 
-    public void EnemyStandKill(GameObject enemy)
+    public void EnemyKillPlane(GameObject enemy, bool AddSegment)
     {
-        coinManager.CoinsAdd(transform.position, 5);
-
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
 
-        var sliceable = enemy.GetComponent<IBzSliceable>();
-        Plane plane = new Plane(transform.up, (-transform.position.y + 0.05f));
-        sliceable.Slice(plane, r =>
+        if(AddSegment)
         {
-            if (!r.sliced)
-            {
-                return;
-            }
-
-            r.outObjectPos.gameObject.GetComponent<Enemy>().DeadStart(true);
-            r.outObjectNeg.gameObject.GetComponent<Enemy>().DeadStart(false);
+            gameManager.SnakeSegmentAddToSnake();
         }
-        );
-    }
 
-    public void EnemyRunKill(GameObject enemy)
-    {
-        coinManager.CoinsAdd(transform.position, 5);
-
-        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
+        if(enemy.GetComponent<EnemyRunCrowd>().isChest)
+        {
+            coinManager.CoinsAdd(transform.position, 100);
+            enemy.GetComponent<EnemyRunCrowd>().isChest = false;
+        }
 
         var sliceable = enemy.GetComponent<IBzSliceable>();
         Plane plane = new Plane(transform.up, (-transform.position.y + 0.05f));
@@ -366,8 +346,21 @@ public class Player : MonoBehaviour
                 return;
             }
 
-            r.outObjectPos.gameObject.GetComponent<EnemyRun>().EnemyDeath(true);
-            r.outObjectNeg.gameObject.GetComponent<EnemyRun>().EnemyDeath(false);
+            if(r.outObjectPos.gameObject.GetComponent<EnemyStand>() != null)
+            {
+                r.outObjectPos.gameObject.GetComponent<EnemyStand>().EnemyDeath(true);
+                r.outObjectNeg.gameObject.GetComponent<EnemyStand>().EnemyDeath(false);
+            }
+            else if (r.outObjectPos.gameObject.GetComponent<EnemyRun>() != null)
+            {
+                r.outObjectPos.gameObject.GetComponent<EnemyRun>().EnemyDeath(true);
+                r.outObjectNeg.gameObject.GetComponent<EnemyRun>().EnemyDeath(false);
+            }
+            else if (r.outObjectPos.gameObject.GetComponent<EnemyRunCrowd>() != null)
+            {
+                r.outObjectPos.gameObject.GetComponent<EnemyRunCrowd>().EnemyDeath(true);
+                r.outObjectNeg.gameObject.GetComponent<EnemyRunCrowd>().EnemyDeath(false);
+            }
         }
         );
     }

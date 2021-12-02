@@ -57,8 +57,8 @@ public class CoinManager : MonoBehaviour
 
     private void CoinsAnimate(Vector3 collectedCoinPosition, int amount)
     {
-        coinsTargetPosition = coinTarget.position;
-        collectedCoinPosition.z -= 0.5f;
+        coinsTargetPosition = Camera.main.transform.InverseTransformPoint(coinTarget.position);
+        //collectedCoinPosition.z -= 0.5f;
 
         for (int i = 0; i < amount; i++)
         {
@@ -67,18 +67,16 @@ public class CoinManager : MonoBehaviour
                 GameObject coin = coinsQueue.Dequeue();
                 coin.SetActive(true);
 
-
                 coin.transform.position = collectedCoinPosition;
 
                 float duration = Random.Range(minCoinsAnimationDuration, maxCoinsAnimationDuration);
-                coin.transform.DOMove(coinsTargetPosition, duration)
+                coin.transform.DOLocalMove(coinsTargetPosition, duration)
                     .SetEase(easeType)
                     .OnComplete(() =>
                     {
                         coin.SetActive(false);
                         coinsQueue.Enqueue(coin);
                         Coins++;
-                        //coinsText.gameObject.transform.DOPunchScale(new Vector3(1.2f, 1.2f, 1.2f), 0.2f);
                         coinsAnimator.SetTrigger("Bounce");
                     });
             }
