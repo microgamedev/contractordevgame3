@@ -25,8 +25,10 @@ public class Player : MonoBehaviour
 
     private float playerSpeedZ;
     private float playerSpeedPlay = 7f;
-    private float playerSpeedFinishEnter = 2f;
-    private float playerSpeedFinishExit = 12f;
+
+    private float playerSpeedFinishEnter = 1f;
+    private float playerSpeedFinishExit = 15f;
+
     private float playerTiltAngle = 30f;
     private float playerDynamicsSmoothTime = 0.05f;
     private float playerTiltPower = 2.0f;
@@ -114,8 +116,9 @@ public class Player : MonoBehaviour
     private void PlayerMoveFinish()
     {
         touchPositionNow = mainCamera.ScreenPointToRay(Input.mousePosition).GetPoint(cameraRaycast).x;
-        playerTargetX += (touchPositionNow - lastTouchPosition);
-        playerTargetX = Mathf.Clamp(playerTargetX, -moveLimitX, moveLimitX);
+        playerTargetX += touchPositionNow - lastTouchPosition;
+        playerTargetX = Mathf.Abs(playerTargetX) * 0.5f;
+        playerTargetX = Mathf.Clamp(playerTargetX, 0.1f, 1.75f);
     }
     // -------------------------------------------------
 
@@ -148,45 +151,56 @@ public class Player : MonoBehaviour
             }
         }
 
-        // -------------------------------------------------
-        // Horizontal snake
-
         if(isFinishEnter)
         {
             // For Test Only
             // --------------
-            tempZ = 127f;
+            //tempZ = 127f;
             // --------------
+            if(isFinishExit)
+            {
+                playerSpeedPlay *= 10f;
+            }
 
             rb.MovePosition(new Vector3(0f, 0f, tempZ));
 
             if (snakeParts.Count > 1)
             {
-                int _count = 0;
+                int _count = 1;
+                Vector3 _tempPos;
+
+                if(playerTargetX < 0.1f)
+                {
+                    playerTargetX = 0.1f;
+                }
+
+                float _stepNextX = playerTargetX;
+                float _stepX = playerTargetX;
+
+                float _stepZ = 0.2f;
 
                 for (int i = 1; i < snakeParts.Count; i++)
                 {
-                    Vector3 _tempPos = snakeParts[i - 1].transform.position;
+                    _tempPos = snakeParts[i - 1].transform.position;
                     _count = i;
+
                     if(_count % 2 == 0)
                     {
-                        _tempPos.x += snakePartDistance + playerTargetX;
+                        _tempPos.x = -_stepX;
+                        _stepX += _stepNextX;
+
                     }
                     else
                     {
-                        _tempPos.x -= snakePartDistance - playerTargetX;
+                        _tempPos.x = _stepX;
+                        _tempPos.z -= _stepZ;
                     }
-
                     _count++;
 
-                    snakeParts[i].transform.position = Vector3.Lerp(snakeParts[i].transform.position, _tempPos, Time.fixedDeltaTime * 10f);
-                    //snakeParts[i].transform.rotation = Quaternion.Lerp(snakeParts[i].transform.rotation, snakeParts[i - 1].transform.rotation, Time.fixedDeltaTime * 20f);
-
+                    snakeParts[i].transform.position = Vector3.Lerp(snakeParts[i].transform.position, _tempPos, Time.fixedDeltaTime * playerSpeedPlay);
                 }
             }
         }
-
-        // -------------------------------------------------
     }
 
     private void PlayerStop()
@@ -373,6 +387,7 @@ public class Player : MonoBehaviour
         isFinishExit = true;
         playerSpeedZ = playerSpeedFinishExit;
 
+        mainCamera.GetComponent<CameraFollow>().StopFollow();
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
     }
 

@@ -9,9 +9,10 @@ public class CameraFollow : MonoBehaviour
     private Vector3 cameraOffset;
     private float cameraSpeed;
     private float cameraSpeedPlay = 25f;
-    private float cameraSpeedFinish = 5;
+    private float cameraSpeedFinish = 1;
 
     private bool isFinish = false;
+    private bool isFollow = true;
 
     private void Start()
     {
@@ -21,15 +22,18 @@ public class CameraFollow : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 newPosition = playerObject.position + cameraOffset;
-        newPosition.x = cameraOffset.x;
-        newPosition.y = cameraOffset.y;
-
-        transform.position = Vector3.Lerp(transform.position, newPosition, cameraSpeed * Time.deltaTime);
-
-        if(isFinish)
+        if(isFollow)
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(45f, 0f, 0f), 1f * Time.deltaTime);
+            Vector3 newPosition = playerObject.position + cameraOffset;
+            newPosition.x = cameraOffset.x;
+            newPosition.y = cameraOffset.y;
+
+            transform.position = Vector3.Lerp(transform.position, newPosition, cameraSpeed * Time.deltaTime);
+
+            if (isFinish)
+            {
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(50f, 0f, 0f), 0.5f * Time.deltaTime);
+            }
         }
     }
 
@@ -38,5 +42,10 @@ public class CameraFollow : MonoBehaviour
         cameraOffset = cameraOffsetFinish;
         cameraSpeed = cameraSpeedFinish;
         isFinish = true;
+    }
+
+    public void StopFollow()
+    {
+        isFollow = false;
     }
 }
