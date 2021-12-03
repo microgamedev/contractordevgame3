@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public bool isFirstTouch = false;
 
     private int Level;
+    public float _levelPosition;
 
     [Space]
     [SerializeField] private int LoadLevel;
@@ -68,7 +69,6 @@ public class GameManager : MonoBehaviour
 
         // Position Player
         float _playerSpeed = playerObject.GetComponent<Player>().playerSpeedPlay;
-        float _levelPosition;
         if (Level > LevelLengthInSeconds.Length - 1)
         {
             _levelPosition = LevelLengthInSeconds[LevelLengthInSeconds.Length - 1];
@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
         }
         _levelPosition = 125 - (_levelPosition * _playerSpeed);
 
-        playerObject.transform.position = new Vector3(0f, 0f, _levelPosition);
+        //playerObject.transform.position = new Vector3(0f, 0f, _levelPosition);
 
         // How To Play
         howToPlay.SetActive(false);
