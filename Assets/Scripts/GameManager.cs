@@ -64,18 +64,22 @@ public class GameManager : MonoBehaviour
             _levelLoad = levelPrefab.Length - 1;
         }
 
-
         Instantiate(levelPrefab[_levelLoad]);
 
         // Position Player
         float _playerSpeed = playerObject.GetComponent<Player>().playerSpeedPlay;
-        float _levelPosition = LevelLengthInSeconds[Level] * _playerSpeed;
+        float _levelPosition;
         if (Level > LevelLengthInSeconds.Length - 1)
         {
-            _levelPosition = LevelLengthInSeconds[LevelLengthInSeconds.Length - 1] * _playerSpeed;
+            _levelPosition = LevelLengthInSeconds[LevelLengthInSeconds.Length - 1];
         }
+        else
+        {
+            _levelPosition = LevelLengthInSeconds[Level];
+        }
+        _levelPosition = 125 - (_levelPosition * _playerSpeed);
 
-        playerObject.transform.position = new Vector3(0f, 0f, 125f - _levelPosition);
+        playerObject.transform.position = new Vector3(0f, 0f, _levelPosition);
 
         // How To Play
         howToPlay.SetActive(false);
