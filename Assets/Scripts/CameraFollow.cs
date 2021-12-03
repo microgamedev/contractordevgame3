@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
@@ -24,10 +24,14 @@ public class CameraFollow : MonoBehaviour
     {
         if(isFollow)
         {
-            Vector3 newPosition = playerObject.position + cameraOffset;
-            newPosition.x = cameraOffset.x;
-            newPosition.y = cameraOffset.y;
+            float angle = playerObject.eulerAngles.y; //Получаем текущее угол вращение игрока
+            var rotatedOffset = Quaternion.Euler(0f, angle, 0f) * cameraOffset; //Вращаем сдвиг по углу вращению игрока
+            
+            Vector3 newPosition = playerObject.position + rotatedOffset;
 
+            var angles = transform.eulerAngles; //Вращаем камеру чтобы она смотрела по направлению движения
+            angles.y = angle;
+            transform.eulerAngles = angles;
             transform.position = Vector3.Lerp(transform.position, newPosition, cameraSpeed * Time.deltaTime);
 
             if (isFinish)

@@ -1,9 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using BzKovSoft.ObjectSlicer;
 using Lofelt.NiceVibrations;
 using TMPro;
+using Dreamteck.Splines;
 
 public class Player : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class Player : MonoBehaviour
     [Space]
     [SerializeField] GameObject playerGFX;
     [SerializeField] TextMeshPro snakePartsCountText;
+
+    [SerializeField] SplineComputer spline;
+    [SerializeField] float splineYOffset = 2f; //Сдвиг игрока по Y относительно кривой
 
     private float snakePartDistance = 0.125f;
 
@@ -45,6 +49,9 @@ public class Player : MonoBehaviour
     private bool isFinishEnter = false;
     private bool isFinishExit = false;
 
+    float movementT = 0; //Позиция на кривой
+    float splineLength = 0; //Сохраненная длина кривой
+
     private void Start()
     {
         snakeParts.Add(gameObject);
@@ -52,7 +59,9 @@ public class Player : MonoBehaviour
 
         playerSpeedZ = playerSpeedPlay;
 
-        
+        //Считаем длину кривой и сохраняем ее в переменную, операция дорогая поэтому делаем ее на старте один раз
+        //это нужно будет пересчитывать если кривая будет меняться
+        splineLength = spline.CalculateLength(); 
     }
 
     private void Update()
@@ -93,14 +102,14 @@ public class Player : MonoBehaviour
             gameManager.HideHowToPlay();
             isStart = true;
         }
-        touchPositionStart = mainCamera.ScreenPointToRay(Input.mousePosition).GetPoint(cameraRaycast).x;
+        touchPositionNow = GetTouchPosition().x;
 
         lastTouchPosition = touchPositionStart;
     }
 
     private void PlayerMove()
     {
-        touchPositionNow = mainCamera.ScreenPointToRay(Input.mousePosition).GetPoint(cameraRaycast).x;
+        touchPositionNow = GetTouchPosition().x;
         playerTargetX += (touchPositionNow - lastTouchPosition);
         playerTargetX = Mathf.Clamp(playerTargetX, -moveLimitX, moveLimitX);
 
@@ -113,29 +122,42 @@ public class Player : MonoBehaviour
     // -------------------------------------------------
     private void PlayerMoveFinish()
     {
-        touchPositionNow = mainCamera.ScreenPointToRay(Input.mousePosition).GetPoint(cameraRaycast).x;
+        touchPositionNow = GetTouchPosition().x;
         playerTargetX += touchPositionNow - lastTouchPosition;
         playerTargetX = Mathf.Abs(playerTargetX) * 0.5f;
         playerTargetX = Mathf.Clamp(playerTargetX, 0.1f, 1.75f);
     }
     // -------------------------------------------------
 
+    //Получаем позицию на луче в локальном пространстве
+    Vector3 GetTouchPosition() 
+    {
+        var worldPoint = mainCamera.ScreenPointToRay(Input.mousePosition).GetPoint(cameraRaycast);
+        var localPoint = mainCamera.transform.InverseTransformPoint(worldPoint);
+        return localPoint;
+    }
+
 
     private void PlayerRun()
     {
         float tempZ = transform.position.z + (Time.fixedDeltaTime * playerSpeedZ);
-
-        if(!isFinishEnter)
+        movementT += Time.fixedDeltaTime * playerSpeedZ / splineLength; //Обновляем позицию t на сплайне
+        movementT = Mathf.Clamp01(movementT); //Ограничеваем значение t от 0 до 1, иначе при взятии позиции со сплайна будет ошибка
+        var sample = spline.Evaluate(movementT); //Берем мировую позицию на сплайне по t
+        
+        if (!isFinishEnter)
         {
             playerNowX = Mathf.SmoothDamp(playerNowX, playerTargetX, ref playerVelocityX, playerDynamicsSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
-            rb.MovePosition(new Vector3(playerNowX, 0f, tempZ));
+            var position = sample.position + Vector3.up * splineYOffset; // складываем позицию на сплайне и сдвиг по Y
+            position += sample.rotation * (Vector3.right * playerNowX); //сдвигаем позицию направо относительно вращения кривой
+            rb.MovePosition(position); //назначаем позицию телу
 
             playerTargetRotation = Mathf.MoveTowards(playerTargetRotation, 0f, Time.fixedDeltaTime * playerTiltResetSpeed);
             playerNowRotation = Mathf.SmoothDamp(playerNowRotation, playerTargetRotation, ref playerRotationVelocity, playerDynamicsSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
 
             float playerRotation = Mathf.Pow(Mathf.Abs(playerNowRotation), playerTiltPower) * Mathf.Sign(playerNowRotation);
 
-            rb.rotation = Quaternion.Euler(0f, 0f, playerRotation * playerTiltAngle);
+            rb.rotation = sample.rotation * Quaternion.Euler(0f, 0f, playerRotation * playerTiltAngle);
 
             if (snakeParts.Count > 1)
             {
