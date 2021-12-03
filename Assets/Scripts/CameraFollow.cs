@@ -32,7 +32,7 @@ public class CameraFollow : MonoBehaviour
 
             if (isFinish)
             {
-                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(50f, 0f, 0f), 0.5f * Time.deltaTime);
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(47.5f, 0f, 0f), 0.5f * Time.deltaTime);
             }
         }
     }

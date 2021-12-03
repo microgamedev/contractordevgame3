@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     [Space]
     [SerializeField] GameObject snakeSegmentPrefab;
     public Queue<GameObject> snakeSegmentQueue = new Queue<GameObject>();
+
+    [Space]
     [SerializeField] GameObject[] levelPrefab;
 
     [Space]
@@ -23,7 +25,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject snakeFXText;
 
     [Space]
-    [SerializeField] GameObject[] bossPrefab;
+    [SerializeField] GameObject playerObject;
+
+    [Space]
+    [SerializeField] int[] LevelLengthInSeconds;
 
     private int _bossCount;
     [HideInInspector] public bool isBossKill = false;
@@ -31,33 +36,55 @@ public class GameManager : MonoBehaviour
 
     private int Level;
 
+    [Space]
+    [SerializeField] private int LoadLevel;
+
     private void Start()
     {
         Application.targetFrameRate = 60;
 
+        // Level
         Level = PlayerPrefs.GetInt("level");
-        if(Level == 0)
+        if (Level == 0)
         {
             PlayerPrefs.SetInt("level", 1);
             Level = 1;
         }
         levelText.text = "LEVEL " + Level;
 
-        int _levelLoad = Level - 1;
-        if(_levelLoad > levelPrefab.Length - 1)
+        int _levelLoad = Level;
+        if (LoadLevel != 0)
         {
-            _levelLoad = Random.Range(2, levelPrefab.Length);
+            _levelLoad = LoadLevel;
+            Level = LoadLevel;
+        }
+        if (_levelLoad > levelPrefab.Length - 1)
+        {
+            //_levelLoad = Random.Range(2, levelPrefab.Length);
+            _levelLoad = levelPrefab.Length - 1;
         }
 
-        _levelLoad = 0;
 
-        //Instantiate(levelPrefab[_levelLoad]);
+        Instantiate(levelPrefab[_levelLoad]);
 
+        // Position Player
+        float _playerSpeed = playerObject.GetComponent<Player>().playerSpeedPlay;
+        float _levelPosition = LevelLengthInSeconds[Level] * _playerSpeed;
+        if (Level > LevelLengthInSeconds.Length - 1)
+        {
+            _levelPosition = LevelLengthInSeconds[LevelLengthInSeconds.Length - 1] * _playerSpeed;
+        }
+
+        playerObject.transform.position = new Vector3(0f, 0f, 125f - _levelPosition);
+
+        // How To Play
         howToPlay.SetActive(false);
         StartCoroutine(ShowHowToPlay());
 
+        // UI
         UI_Finish.SetActive(false);
 
+        // Snake Pool
         SnakeSegmentsPrepare();
     }
 

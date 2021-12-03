@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemyRunCrowd : MonoBehaviour
 {
-    private float enemyRunSpeed = 5f;
+    private float enemyRunSpeed = 4f;
     private Rigidbody rb;
     private Player player;
     private Animator enemyAnimator;

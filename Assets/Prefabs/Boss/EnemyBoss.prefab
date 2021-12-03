@@ -257,13 +257,12 @@ GameObject:
   - component: {fileID: 1314643044619186803}
   - component: {fileID: 1314643044609301951}
   - component: {fileID: 7627318176844029057}
-  - component: {fileID: 1314643044618825246}
   - component: {fileID: 5689312631935715640}
-  - component: {fileID: 3755318901398560352}
   - component: {fileID: 5459368272676023679}
+  - component: {fileID: 1314643044618825246}
   m_Layer: 7
   m_Name: EnemyBoss
-  m_TagString: EnemyBoss
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -314,23 +313,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 1.6184189
+  m_Radius: 0.55627954
+  m_Height: 1.6608095
   m_Direction: 1
-  m_Center: {x: 0, y: 0.80920947, z: 0}
---- !u!114 &1314643044618825246
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1314643044618825233}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2fe99323c94f4715a8de251548b5547, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fx: {fileID: 2786078452126752473}
+  m_Center: {x: -5.0243657e-15, y: 0.83040476, z: -0.0000010728836}
 --- !u!114 &5689312631935715640
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -354,18 +340,6 @@ MonoBehaviour:
   _convertToRagdoll: 1
   _alignPrefSize: 0
   delayBetweenSlices: 1
---- !u!114 &3755318901398560352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1314643044618825233}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18360257b5b118644b7c144e3c800b49, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!54 &5459368272676023679
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -382,6 +356,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1314643044618825246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1314643044618825233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2fe99323c94f4715a8de251548b5547, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fx: {fileID: 2786078452126752473}
 --- !u!1 &1314643044618825235
 GameObject:
   m_ObjectHideFlags: 0

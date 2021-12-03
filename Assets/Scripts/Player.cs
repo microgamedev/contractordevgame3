@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
     private float snakePartDistance = 0.125f;
 
     private float playerSpeedZ;
-    private float playerSpeedPlay = 7f;
+    public float playerSpeedPlay = 7f;
 
     private float playerSpeedFinishEnter = 1f;
     private float playerSpeedFinishExit = 15f;
@@ -406,6 +406,10 @@ public class Player : MonoBehaviour
     public void FinishWall()
     {
         PlayerStop();
+        for(int i = 0; i < snakeParts.Count; i++)
+        {
+            snakeParts[i].GetComponentInChildren<MeshRenderer>().enabled = false;
+        }
         gameManager.GameFinish(transform.position.z);
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
     }
