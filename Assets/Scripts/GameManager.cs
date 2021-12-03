@@ -135,7 +135,7 @@ public class GameManager : MonoBehaviour
 
         PlayerPrefs.SetInt("level", Level + 1);
 
-        finalConfettiFX.gameObject.transform.position = new Vector3(0f, 4f, positionZ);
+        finalConfettiFX.gameObject.transform.position = new Vector3(0f, 20f, positionZ - 10f);
         finalConfettiFX.Play();
 
         StartCoroutine(GameFinishUI());

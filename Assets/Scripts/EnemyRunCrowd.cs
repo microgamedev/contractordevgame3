@@ -89,9 +89,12 @@ public class EnemyRunCrowd : MonoBehaviour
                 if(isChest)
                 {
                     Destroy(chestObject);
+                    player.EnemyKillPlane(gameObject, false, 50);
                 }
-
-                player.EnemyKillPlane(gameObject, false);
+                else
+                {
+                    player.EnemyKillPlane(gameObject, false, 0);
+                }
             }
         }
     }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -52,6 +51,8 @@ public class Player : MonoBehaviour
         SnakePartsTextUpdate();
 
         playerSpeedZ = playerSpeedPlay;
+
+        
     }
 
     private void Update()
@@ -191,6 +192,11 @@ public class Player : MonoBehaviour
                     _count++;
 
                     snakeParts[i].transform.position = Vector3.Lerp(snakeParts[i].transform.position, _tempPos, Time.fixedDeltaTime * playerSpeedPlay);
+
+                    if(isFinishExit)
+                    {
+                        snakeParts[i].transform.rotation = Quaternion.Lerp(snakeParts[i].transform.rotation, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Time.fixedDeltaTime * 20f);
+                    }
                 }
             }
         }
@@ -322,7 +328,7 @@ public class Player : MonoBehaviour
         );
     }
 
-    public void EnemyKillPlane(GameObject enemy, bool AddSegment)
+    public void EnemyKillPlane(GameObject enemy, bool AddSegment, int AddCoins)
     {
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
 
@@ -331,10 +337,18 @@ public class Player : MonoBehaviour
             gameManager.SnakeSegmentAddToSnake();
         }
 
-        if(enemy.GetComponent<EnemyRunCrowd>().isChest)
+        if(AddCoins > 0)
         {
-            coinManager.CoinsAdd(transform.position, 100);
-            enemy.GetComponent<EnemyRunCrowd>().isChest = false;
+            coinManager.CoinsAdd(transform.position, AddCoins);
+        }
+
+
+        if (enemy.GetComponent<EnemyRunCrowd>() != null)
+        {
+            if (enemy.GetComponent<EnemyRunCrowd>().isChest)
+            {
+                enemy.GetComponent<EnemyRunCrowd>().isChest = false;
+            }
         }
 
         var sliceable = enemy.GetComponent<IBzSliceable>();
@@ -360,6 +374,11 @@ public class Player : MonoBehaviour
             {
                 r.outObjectPos.gameObject.GetComponent<EnemyRunCrowd>().EnemyDeath(true);
                 r.outObjectNeg.gameObject.GetComponent<EnemyRunCrowd>().EnemyDeath(false);
+            }
+            else if (r.outObjectPos.gameObject.GetComponent<EnemyBoss>() != null)
+            {
+                r.outObjectPos.gameObject.GetComponent<EnemyBoss>().EnemyDeath(true);
+                r.outObjectNeg.gameObject.GetComponent<EnemyBoss>().EnemyDeath(false);
             }
         }
         );

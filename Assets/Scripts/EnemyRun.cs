@@ -93,7 +93,7 @@ public class EnemyRun : MonoBehaviour
             {
                 isDeath = true;
                 snakeSegmentPrefab.SetActive(false);
-                player.EnemyKillPlane(gameObject, true);
+                player.EnemyKillPlane(gameObject, true, 0);
             }
         }
     }

@@ -1,11 +1,12 @@
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class EnemyStand : MonoBehaviour
+public class EnemyBoss : MonoBehaviour
 {
     private Rigidbody rb;
     private Player player;
-    [SerializeField] GameObject snakeSegmentPrefab;
+    [SerializeField] private ParticleSystem fx;
 
     private bool isDeath = false;
 
@@ -15,14 +16,6 @@ public class EnemyStand : MonoBehaviour
         player = FindObjectOfType<Player>();
     }
 
-    private void Start()
-    {
-        if (!isDeath)
-        {
-            snakeSegmentPrefab.GetComponent<SnakeSegment>().SnakeSegmentIsInactive(false);
-        }
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") || other.CompareTag("Snake"))
@@ -30,8 +23,7 @@ public class EnemyStand : MonoBehaviour
             if (!isDeath)
             {
                 isDeath = true;
-                snakeSegmentPrefab.SetActive(false);
-                player.EnemyKillPlane(gameObject, true, 0);
+                player.EnemyKillPlane(gameObject, false, 10);
             }
         }
     }
@@ -43,13 +35,14 @@ public class EnemyStand : MonoBehaviour
         isDeath = true;
         rb.isKinematic = false;
         rb.useGravity = true;
-        snakeSegmentPrefab.SetActive(false);
 
-        rb.AddTorque(new Vector3(Random.Range(0.25f, 0.5f), Random.Range(0.25f, 0.5f), Random.Range(0.25f, 0.5f)) * 0.5f, ForceMode.Impulse);
+        //rb.AddTorque(new Vector3(Random.Range(0.25f, 0.5f), Random.Range(0.25f, 0.5f), Random.Range(0.25f, 0.5f)) * 0.5f, ForceMode.Impulse);
 
         if (_bounce)
         {
-            rb.AddForce(new Vector3(Random.Range(0.25f, 0.5f), 1f, Random.Range(0.25f, 0.5f)) * 0.5f, ForceMode.Impulse);
+            rb.AddForce(new Vector3(Random.Range(0.25f, 0.5f), 1f, Random.Range(0.25f, 0.5f)) * 1f, ForceMode.Impulse);
         }
+        fx.Play();
+        Destroy(gameObject, 5f);
     }
 }
