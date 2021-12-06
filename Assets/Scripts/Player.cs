@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
     private float playerSpeedZ;
     public float playerSpeedPlay = 7f;
 
-    private float playerSpeedFinishEnter = 1f;
+    private float playerSpeedFinishEnter = 1.5f;
     private float playerSpeedFinishExit = 15f;
 
     private float playerTiltAngle = 30f;
@@ -61,7 +61,9 @@ public class Player : MonoBehaviour
 
         //Считаем длину кривой и сохраняем ее в переменную, операция дорогая поэтому делаем ее на старте один раз
         //это нужно будет пересчитывать если кривая будет меняться
-        splineLength = spline.CalculateLength(); 
+        splineLength = spline.CalculateLength();
+
+        transform.position = new Vector3(spline.GetPointPosition(0).x, spline.GetPointPosition(0).y + 2f, spline.GetPointPosition(0).z);
     }
 
     private void Update()
@@ -193,7 +195,7 @@ public class Player : MonoBehaviour
                 float _stepNextX = playerTargetX;
                 float _stepX = playerTargetX;
 
-                float _stepZ = 0.15f;
+                float _stepZ = 0.05f;
 
                 for (int i = 1; i < snakeParts.Count; i++)
                 {
