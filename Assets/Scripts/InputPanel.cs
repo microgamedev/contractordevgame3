@@ -6,10 +6,11 @@ public class InputPanel : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
 {
     Vector2 lastPosition;
     Player player;
-
+    Canvas canvas;
     void OnEnable()
     {
         player = FindObjectOfType<Player>(true);
+        canvas = GetComponentInParent<Canvas>();
         //var eventSystem = FindObjectOfType<EventSystem>();
         //EventSystem.current.currentInputModule.
     }
@@ -29,7 +30,7 @@ public class InputPanel : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
 
     public void OnDrag(PointerEventData eventData)
     {
-        player.InputX = (eventData.position - lastPosition).x;
+        player.InputX = (eventData.position - lastPosition).x / canvas.pixelRect.width;
         lastPosition = eventData.position;
     }
 

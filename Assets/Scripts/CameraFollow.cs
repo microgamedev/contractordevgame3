@@ -2,7 +2,7 @@
 
 public class CameraFollow : MonoBehaviour
 {
-    [SerializeField] private Transform playerObject;
+    [SerializeField] private Player playerObject;
     [SerializeField] private Vector3 cameraOffsetPlay;
     [SerializeField] private Vector3 cameraOffsetFinish;
 
@@ -24,19 +24,23 @@ public class CameraFollow : MonoBehaviour
     {
         if(isFollow)
         {
-            float angle = playerObject.eulerAngles.y; //Получаем текущее угол вращение игрока
-            var rotatedOffset = Quaternion.Euler(0f, angle, 0f) * cameraOffset; //Вращаем сдвиг по углу вращению игрока
-            
-            Vector3 newPosition = playerObject.position + rotatedOffset;
-
-            var angles = transform.eulerAngles; //Вращаем камеру чтобы она смотрела по направлению движения
-            angles.y = angle;
-            transform.eulerAngles = angles;
-            transform.position = Vector3.Lerp(transform.position, newPosition, cameraSpeed * Time.deltaTime);
-
-            if (isFinish)
+            var sample = playerObject.SplineSample;
+            if (sample != null)
             {
-                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(47.5f, 0f, 0f), 0.5f * Time.deltaTime);
+                float angle = sample.rotation.eulerAngles.y; //Получаем текущее угол вращение игрока
+                var rotatedOffset = Quaternion.Euler(0f, angle, 0f) * cameraOffset; //Вращаем сдвиг по углу вращению игрока
+
+                Vector3 newPosition = sample.position + rotatedOffset + Vector3.up * playerObject.SplineYOffset;
+
+                var angles = transform.eulerAngles; //Вращаем камеру чтобы она смотрела по направлению движения
+                angles.y = angle;
+                transform.eulerAngles = angles;
+                transform.position = Vector3.Lerp(transform.position, newPosition, cameraSpeed * Time.deltaTime);
+
+                if (isFinish)
+                {
+                    transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(47.5f, 0f, 0f), 0.5f * Time.deltaTime);
+                }
             }
         }
     }

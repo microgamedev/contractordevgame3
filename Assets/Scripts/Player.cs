@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
     private float playerSpeedFinishExit = 15f;
 
     private float playerTiltAngle = 30f;
-    private float playerDynamicsSmoothTime = 0.1f;
+    private float playerDynamicsSmoothTime = 0.06f;
     private float playerTiltPower = 2.0f;
     private float playerTiltSensetivity = 10.0f;
     private float playerTiltResetSpeed = 3.0f;
@@ -54,6 +54,8 @@ public class Player : MonoBehaviour
     float splineLength = 0; //Сохраненная длина кривой
 
     public float InputX { get; set; }
+    public SplineSample SplineSample { get; private set; }
+    public float SplineYOffset => splineYOffset;
 
     private void Start()
     {
@@ -67,6 +69,7 @@ public class Player : MonoBehaviour
         splineLength = spline.CalculateLength();
 
         transform.position = new Vector3(spline.GetPointPosition(0).x, spline.GetPointPosition(0).y + 2f, spline.GetPointPosition(0).z);
+        SplineSample = spline.Evaluate(0f);
     }
 
     private void Update()
@@ -150,7 +153,7 @@ public class Player : MonoBehaviour
         movementT += Time.fixedDeltaTime * playerSpeedZ / splineLength; //Обновляем позицию t на сплайне
         movementT = Mathf.Clamp01(movementT); //Ограничеваем значение t от 0 до 1, иначе при взятии позиции со сплайна будет ошибка
         var sample = spline.Evaluate(movementT); //Берем мировую позицию на сплайне по t
-        
+        SplineSample = sample;
         if (!isFinishEnter)
         {
             playerNowX = Mathf.SmoothDamp(playerNowX, playerTargetX, ref playerVelocityX, playerDynamicsSmoothTime, Mathf.Infinity, Time.fixedDeltaTime);
