@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] Rigidbody rb;
     [SerializeField] Camera mainCamera;
-    private float cameraRaycast = 11f;
+    private float cameraRaycast = 12f;
     private float moveLimitX = 1.5f;
 
     [Space]
@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject playerGFX;
     [SerializeField] TextMeshPro snakePartsCountText;
 
-    [SerializeField] SplineComputer spline;
+    private SplineComputer spline;
     [SerializeField] float splineYOffset = 2f; //Сдвиг игрока по Y относительно кривой
     [SerializeField] float inputSensetivity = 1f;
 
@@ -30,8 +30,8 @@ public class Player : MonoBehaviour
     private float playerSpeedZ;
     public float playerSpeedPlay = 7f;
 
-    private float playerSpeedFinishEnter = 1.5f;
-    private float playerSpeedFinishExit = 15f;
+    private float playerSpeedFinishEnter = 2f;
+    private float playerSpeedFinishExit = 12f;
 
     private float playerTiltAngle = 30f;
     private float playerDynamicsSmoothTime = 0.06f;
@@ -43,7 +43,7 @@ public class Player : MonoBehaviour
 
     private float touchPositionStart, touchPositionNow, lastTouchPosition;
     private float playerTargetX, playerNowX, playerVelocityX;
-    private float  playerTargetRotation, playerRotationVelocity, playerNowRotation;
+    private float playerTargetRotation, playerRotationVelocity, playerNowRotation;
     private bool isStart = false;
     private bool isDead = false;
     private bool isStop = false;
@@ -64,6 +64,7 @@ public class Player : MonoBehaviour
 
         playerSpeedZ = playerSpeedPlay;
 
+        spline = gameManager.splineComputer;
         //Считаем длину кривой и сохраняем ее в переменную, операция дорогая поэтому делаем ее на старте один раз
         //это нужно будет пересчитывать если кривая будет меняться
         splineLength = spline.CalculateLength();

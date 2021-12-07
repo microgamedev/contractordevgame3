@@ -4,11 +4,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using Lofelt.NiceVibrations;
+using Dreamteck.Splines;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI levelText;
-
     [SerializeField] GameObject howToPlay;
     [SerializeField] GameObject UI_Finish;
 
@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     public Queue<GameObject> snakeSegmentQueue = new Queue<GameObject>();
 
     [Space]
+    [SerializeField] RoadManager roadManager;
+    [HideInInspector] public SplineComputer splineComputer;
     [SerializeField] GameObject[] levelPrefab;
 
     [Space]
@@ -24,18 +26,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] ParticleSystem snakeFX;
     [SerializeField] GameObject snakeFXText;
 
-    [Space]
-    [SerializeField] GameObject playerObject;
-
-    [Space]
-    [SerializeField] int[] LevelLengthInSeconds;
-
     private int _bossCount;
     [HideInInspector] public bool isBossKill = false;
     [HideInInspector] public bool isFirstTouch = false;
 
     private int Level;
-    public float _levelPosition;
 
     [Space]
     [SerializeField] private int LoadLevel;
@@ -57,6 +52,7 @@ public class GameManager : MonoBehaviour
         if (LoadLevel != 0)
         {
             _levelLoad = LoadLevel;
+            levelText.text = "LEVEL " + LoadLevel;
             Level = LoadLevel;
         }
         if (_levelLoad > levelPrefab.Length - 1)
@@ -67,19 +63,8 @@ public class GameManager : MonoBehaviour
 
         Instantiate(levelPrefab[_levelLoad]);
 
-        // Position Player
-        float _playerSpeed = playerObject.GetComponent<Player>().playerSpeedPlay;
-        if (Level > LevelLengthInSeconds.Length - 1)
-        {
-            _levelPosition = LevelLengthInSeconds[LevelLengthInSeconds.Length - 1];
-        }
-        else
-        {
-            _levelPosition = LevelLengthInSeconds[Level];
-        }
-        _levelPosition = 125 - (_levelPosition * _playerSpeed);
-
-        //playerObject.transform.position = new Vector3(0f, 0f, _levelPosition);
+        roadManager.roadPrefab[_levelLoad].SetActive(true);
+        splineComputer = roadManager.roadPrefab[_levelLoad].GetComponent<SplineComputer>();
 
         // How To Play
         howToPlay.SetActive(false);
