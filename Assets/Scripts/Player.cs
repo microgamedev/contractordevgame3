@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] SplineComputer spline;
     [SerializeField] float splineYOffset = 2f; //Сдвиг игрока по Y относительно кривой
+    [SerializeField] float inputSensetivity = 1f;
 
     private float snakePartDistance = 0.125f;
 
@@ -33,7 +34,7 @@ public class Player : MonoBehaviour
     private float playerSpeedFinishExit = 15f;
 
     private float playerTiltAngle = 30f;
-    private float playerDynamicsSmoothTime = 0.05f;
+    private float playerDynamicsSmoothTime = 0.1f;
     private float playerTiltPower = 2.0f;
     private float playerTiltSensetivity = 10.0f;
     private float playerTiltResetSpeed = 3.0f;
@@ -51,6 +52,8 @@ public class Player : MonoBehaviour
 
     float movementT = 0; //Позиция на кривой
     float splineLength = 0; //Сохраненная длина кривой
+
+    public float InputX { get; set; }
 
     private void Start()
     {
@@ -111,11 +114,12 @@ public class Player : MonoBehaviour
 
     private void PlayerMove()
     {
-        touchPositionNow = GetTouchPosition().x;
-        playerTargetX += (touchPositionNow - lastTouchPosition);
+        //touchPositionNow = GetTouchPosition().x;
+        float input = InputX * inputSensetivity;
+        playerTargetX += input;
         playerTargetX = Mathf.Clamp(playerTargetX, -moveLimitX, moveLimitX);
 
-        playerTargetRotation += (touchPositionNow - lastTouchPosition) * playerTiltSensetivity; 
+        playerTargetRotation += input * playerTiltSensetivity; 
         playerTargetRotation = Mathf.Clamp(playerTargetRotation, -1f, 1f);
         lastTouchPosition = touchPositionNow;
     }
