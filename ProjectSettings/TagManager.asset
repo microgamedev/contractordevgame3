@@ -13,6 +13,7 @@ TagManager:
   - SnakeSegment
   - Lamp
   - FinishWall
+  - Wood
   layers:
   - Default
   - TransparentFX

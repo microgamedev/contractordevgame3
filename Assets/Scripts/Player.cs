@@ -266,7 +266,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            PlayerDead();
+            //PlayerDead();
         }
 
         SnakePartsTextUpdate();
@@ -447,6 +447,13 @@ public class Player : MonoBehaviour
     }
 
     public void StoneTouch()
+    {
+        SnakeSegmentRemove();
+        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
+        gameManager.SlowMoStart();
+    }
+
+    public void WoodTouch()
     {
         SnakeSegmentRemove();
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);

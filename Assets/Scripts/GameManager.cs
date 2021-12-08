@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
         }
 
         Instantiate(levelPrefab[_levelLoad]);
-
+        
         roadManager.roadPrefab[_levelLoad].SetActive(true);
         splineComputer = roadManager.roadPrefab[_levelLoad].GetComponent<SplineComputer>();
 
