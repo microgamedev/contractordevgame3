@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     private float snakePartDistance = 0.125f;
 
     private float playerSpeedZ;
-    public float playerSpeedPlay = 7f;
+    public float playerSpeedPlay = 7.5f;
 
     private float playerSpeedFinishEnter = 2f;
     private float playerSpeedFinishExit = 12f;
