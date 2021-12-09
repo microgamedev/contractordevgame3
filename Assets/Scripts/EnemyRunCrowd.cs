@@ -1,86 +1,17 @@
 using System.Collections;
 using UnityEngine;
 
-public class EnemyRunCrowd : MonoBehaviour
+public class EnemyRunCrowd : EnemyRun
 {
-    private float enemyRunSpeed = 4f;
-    private Rigidbody rb;
-    private Player player;
-    private Animator enemyAnimator;
 
     public bool isChest = false;
-    private bool isDeath = false;
-    private bool isRun = false;
     [SerializeField] GameObject chestObject;
 
-    private void Awake()
+    //TODO: needs refactor
+    protected override void OnTriggerEnter(Collider other)
     {
-        player = FindObjectOfType<Player>();
-        rb = GetComponent<Rigidbody>();
-
-        if (GetComponent<Animator>() != null)
-        {
-            enemyAnimator = GetComponent<Animator>();
-        }
-    }
-
-    private void FixedUpdate()
-    {
-        if(!isDeath)
-        {
-            if (!isRun)
-            {
-                ReadyToRun();
-            }
-            if (isRun && !isDeath)
-            {
-                ReadyToStop();
-            }
-        }
-    }
-
-    private void Update()
-    {
-        if (isRun && !isDeath)
-        {
-            Vector3 _forward = new Vector3(0, 0, 1);
-            _forward = _forward.normalized * enemyRunSpeed * Time.deltaTime;
-            rb.MovePosition(transform.position + _forward);
-        }
-    }
-
-    private void ReadyToRun()
-    {
-        if(transform.position.z - player.gameObject.transform.position.z < 6f)
-        {
-            RunAway();
-        }
-    }
-
-    private void ReadyToStop()
-    {
-        if (transform.position.z < player.gameObject.transform.position.z)
-        {
-            RunStop();
-        }
-    }
-
-    private void RunAway()
-    {
-        isRun = true;
-        transform.rotation = Quaternion.Euler(0, 0f, 0);
-        enemyAnimator.SetBool("Run", true);
-    }
-
-    private void RunStop()
-    {
-        isRun = false;
-        enemyAnimator.SetBool("Run", false);
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.CompareTag("Player") || other.CompareTag("Snake"))
+        //TODO: no base method call
+        if (other.CompareTag("Player") || other.CompareTag("Snake"))
         {
             if(!isDeath)
             {
@@ -99,8 +30,10 @@ public class EnemyRunCrowd : MonoBehaviour
         }
     }
 
-    public void EnemyDeath(bool _bounce)
+    //TODO: needs refactor
+    public override void EnemyDeath(bool _bounce)
     {
+        //TODO: no base method call
         gameObject.layer = LayerMask.NameToLayer("NoCollider");
 
         isDeath = true;

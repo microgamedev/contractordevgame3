@@ -10,15 +10,15 @@ public class EnemyRun : MonoBehaviour
         Spline,
     }
 
-    private float enemyRunSpeed = 4f;
-    private Rigidbody rb;
-    private Player player;
-    private Animator enemyAnimator;
+    protected float enemyRunSpeed = 4f;
+    protected Rigidbody rb;
+    protected Player player;
+    protected Animator enemyAnimator;
     [SerializeField] GameObject snakeSegmentPrefab;
     [SerializeField] RunMode runMode;
 
-    private bool isDeath = false;
-    private bool isRun = false;
+    protected bool isDeath = false;
+    protected bool isRun = false;
     SplineComputer spline;
     GameManager manager;
 
@@ -37,7 +37,7 @@ public class EnemyRun : MonoBehaviour
 
     private void Start()
     {
-        if(!isDeath)
+        if(!isDeath && snakeSegmentPrefab != null)
         {
             snakeSegmentPrefab.GetComponent<SnakeSegment>().SnakeSegmentIsInactive(false);
         }
@@ -60,24 +60,22 @@ public class EnemyRun : MonoBehaviour
 
         if (isRun && !isDeath)
         {
-            Vector3 _forward = new Vector3(0, 0, 1);
-            _forward = _forward.normalized * enemyRunSpeed * Time.deltaTime;
+            Vector3 _forward = Vector3.zero;
 
-            var nextPosition = rb.position + _forward;
-            var splineSample = spline.Project(nextPosition);
+            var splineSample = spline.Project(transform.position);
 
             switch (runMode)
             {
                 case RunMode.GlobalZ:
+                    _forward = Vector3.forward;
                     break;
                 case RunMode.Spline:
-                    var splineDirection = splineSample.forward;
-                    _forward = splineDirection;
-                    splineDirection.y = 0;
-                    transform.forward = splineDirection;
+                    _forward = splineSample.forward;
                     break;
             }
+            _forward = _forward.normalized * enemyRunSpeed * Time.fixedDeltaTime;
 
+            var nextPosition = rb.position + _forward;
             float distance = Vector3.Distance(nextPosition, splineSample.position);
 
             if (distance > manager.RoadWidth)
@@ -88,7 +86,10 @@ public class EnemyRun : MonoBehaviour
                 nextPosition += correctionVector;
             }
 
-            rb.MovePosition(nextPosition + _forward);
+            rb.MovePosition(nextPosition);
+            var rotationLook = _forward;
+            rotationLook.y = 0.0f;
+            rb.MoveRotation(Quaternion.LookRotation(rotationLook.normalized));
         }
     }
 
@@ -122,28 +123,33 @@ public class EnemyRun : MonoBehaviour
         enemyAnimator.SetBool("Run", false);
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Player") || other.CompareTag("Snake"))
         {
             if(!isDeath)
             {
                 isDeath = true;
-                snakeSegmentPrefab.SetActive(false);
+                if (snakeSegmentPrefab != null)
+                {
+                    snakeSegmentPrefab.SetActive(false);
+                }
                 player.EnemyKillPlane(gameObject, true, 0);
             }
         }
     }
 
-    public void EnemyDeath(bool _bounce)
+    public virtual void EnemyDeath(bool _bounce)
     {
         gameObject.layer = LayerMask.NameToLayer("NoCollider");
 
         isDeath = true;
         rb.isKinematic = false;
         rb.useGravity = true;
-        snakeSegmentPrefab.SetActive(false);
-
+        if (snakeSegmentPrefab != null)
+        {
+            snakeSegmentPrefab.SetActive(false);
+        }
         rb.AddTorque(new Vector3(Random.Range(0.25f, 0.5f), Random.Range(0.25f, 0.5f), Random.Range(0.25f, 0.5f)) * 0.5f, ForceMode.Impulse);
 
         if (_bounce)
