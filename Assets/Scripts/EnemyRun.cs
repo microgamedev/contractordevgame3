@@ -150,5 +150,7 @@ public class EnemyRun : MonoBehaviour
         {
             rb.AddForce(new Vector3(Random.Range(0.25f, 0.5f), 1f, Random.Range(0.25f, 0.5f)) * 0.5f, ForceMode.Impulse);
         }
+
+        Destroy(gameObject, 3f);
     }
 }

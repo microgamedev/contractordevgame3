@@ -24,6 +24,7 @@ public class Stone : MonoBehaviour
             _snakeSegment.GetComponent<SnakeSegment>().SnakeSegmentIsInactive(false);
             _snakeSegment.transform.SetParent(transform, false);
             _snakeSegment.transform.position = other.GetContact(0).point;
+            _snakeSegment.transform.rotation = Quaternion.Euler(0,0,0);
 
             gameObject.layer = LayerMask.NameToLayer("NoCollider");
             rb.isKinematic = false;
