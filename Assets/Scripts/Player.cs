@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     [Space]
     [SerializeField] GameObject playerGFX;
     [SerializeField] TextMeshPro snakePartsCountText;
+    [SerializeField] GameObject snakeSegmentPrefab;
 
     private SplineComputer spline;
     [SerializeField] float splineYOffset = 2f; //Сдвиг игрока по Y относительно кривой
@@ -56,6 +57,9 @@ public class Player : MonoBehaviour
     public float InputX { get; set; }
     public SplineSample SplineSample { get; private set; }
     public float SplineYOffset => splineYOffset;
+
+    Vector3 _tempPos;
+    private bool isEvenSnakeSegmentsCount = false;
 
     private void Start()
     {
@@ -193,7 +197,6 @@ public class Player : MonoBehaviour
             if (snakeParts.Count > 1)
             {
                 int _count = 1;
-                Vector3 _tempPos;
 
                 if(playerTargetX < 0.1f)
                 {
@@ -204,6 +207,20 @@ public class Player : MonoBehaviour
                 float _stepX = playerTargetX;
 
                 float _stepZ = 0.05f;
+
+                if(snakeParts.Count % 2 == 0 && !isEvenSnakeSegmentsCount)
+                {
+                    GameObject _snakeSegmentPrefab = Instantiate(snakeSegmentPrefab);
+
+                    Vector3 newPartPosition = snakeParts[snakeParts.Count - 1].transform.position;
+                    newPartPosition.z -= snakePartDistance;
+                    _snakeSegmentPrefab.transform.position = newPartPosition;
+
+                    snakeParts.Add(_snakeSegmentPrefab);
+
+                    playerGFX.SetActive(false);
+                    isEvenSnakeSegmentsCount = true;
+                }
 
                 for (int i = 1; i < snakeParts.Count; i++)
                 {
@@ -435,6 +452,11 @@ public class Player : MonoBehaviour
     {
         isFinishExit = true;
         playerSpeedZ = playerSpeedFinishExit;
+
+        if(snakeParts.Count % 2 == 0)
+        {
+            GetComponent<SphereCollider>().enabled = false;
+        }
 
         mainCamera.GetComponent<CameraFollow>().StopFollow();
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
