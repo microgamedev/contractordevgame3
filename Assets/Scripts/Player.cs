@@ -227,13 +227,13 @@ public class Player : MonoBehaviour
                     _tempPos = snakeParts[i - 1].transform.position;
                     _count = i;
 
-                    if(_count % 2 == 0)
+                    if(_count % 2 != 0)
                     {
                         _tempPos.x = -_stepX;
                         _stepX += _stepNextX;
 
                     }
-                    else
+                    else if(_count % 2 == 0)
                     {
                         _tempPos.x = _stepX;
                         _tempPos.z -= _stepZ;
