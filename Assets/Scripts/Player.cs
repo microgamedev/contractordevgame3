@@ -58,7 +58,6 @@ public class Player : MonoBehaviour
     public SplineSample SplineSample { get; private set; }
     public float SplineYOffset => splineYOffset;
 
-    Vector3 _tempPos;
     private bool isEvenSnakeSegmentsCount = false;
 
     private void Start()
@@ -208,35 +207,21 @@ public class Player : MonoBehaviour
 
                 float _stepZ = 0.05f;
 
-                if(snakeParts.Count % 2 == 0 && !isEvenSnakeSegmentsCount)
-                {
-                    GameObject _snakeSegmentPrefab = Instantiate(snakeSegmentPrefab);
-
-                    Vector3 newPartPosition = snakeParts[snakeParts.Count - 1].transform.position;
-                    newPartPosition.z -= snakePartDistance;
-                    _snakeSegmentPrefab.transform.position = newPartPosition;
-
-                    snakeParts.Add(_snakeSegmentPrefab);
-
-                    playerGFX.SetActive(false);
-                    isEvenSnakeSegmentsCount = true;
-                }
-
                 for (int i = 1; i < snakeParts.Count; i++)
                 {
-                    _tempPos = snakeParts[i - 1].transform.position;
+                     Vector3 _tempPos = snakeParts[i - 1].transform.position;
                     _count = i;
 
-                    if(_count % 2 != 0)
+                    if(_count % 2 == 0)
                     {
                         _tempPos.x = -_stepX;
                         _stepX += _stepNextX;
-
                     }
-                    else if(_count % 2 == 0)
+                    else
                     {
                         _tempPos.x = _stepX;
                         _tempPos.z -= _stepZ;
+
                     }
                     _count++;
 
@@ -320,6 +305,23 @@ public class Player : MonoBehaviour
         {
             SliceLamp(other.gameObject);
         }
+
+        //if (other.CompareTag("CheckSnake") && !isEvenSnakeSegmentsCount)
+        //{
+        //    if (snakeParts.Count % 2 == 0)
+        //    {
+        //        GameObject _snakeSegmentPrefab = Instantiate(snakeSegmentPrefab);
+
+        //        Vector3 newPartPosition = snakeParts[snakeParts.Count - 1].transform.position;
+        //        newPartPosition.z -= snakePartDistance;
+        //        _snakeSegmentPrefab.transform.position = newPartPosition;
+
+        //        snakeParts.Add(_snakeSegmentPrefab);
+
+        //        playerGFX.SetActive(false);
+        //        isEvenSnakeSegmentsCount = true;
+        //    }
+        //}
     }
 
     private void OnTriggerExit(Collider other)
@@ -453,7 +455,7 @@ public class Player : MonoBehaviour
         isFinishExit = true;
         playerSpeedZ = playerSpeedFinishExit;
 
-        if(snakeParts.Count % 2 == 0)
+        if(isEvenSnakeSegmentsCount)
         {
             GetComponent<SphereCollider>().enabled = false;
         }
