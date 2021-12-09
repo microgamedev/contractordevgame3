@@ -197,9 +197,9 @@ public class Player : MonoBehaviour
             {
                 int _count = 1;
 
-                if(playerTargetX < 0.1f)
+                if(playerTargetX < 0.125f)
                 {
-                    playerTargetX = 0.1f;
+                    playerTargetX = 0.125f;
                 }
 
                 float _stepNextX = playerTargetX;
@@ -278,7 +278,7 @@ public class Player : MonoBehaviour
     {
         snakePartsCountText.text = "" + snakeParts.Count;
 
-        if (isDead || isFinishEnter)
+        if (isDead || isFinishEnter || isEvenSnakeSegmentsCount)
         {
             snakePartsCountText.text = "";
         }
@@ -306,22 +306,14 @@ public class Player : MonoBehaviour
             SliceLamp(other.gameObject);
         }
 
-        //if (other.CompareTag("CheckSnake") && !isEvenSnakeSegmentsCount)
-        //{
-        //    if (snakeParts.Count % 2 == 0)
-        //    {
-        //        GameObject _snakeSegmentPrefab = Instantiate(snakeSegmentPrefab);
-
-        //        Vector3 newPartPosition = snakeParts[snakeParts.Count - 1].transform.position;
-        //        newPartPosition.z -= snakePartDistance;
-        //        _snakeSegmentPrefab.transform.position = newPartPosition;
-
-        //        snakeParts.Add(_snakeSegmentPrefab);
-
-        //        playerGFX.SetActive(false);
-        //        isEvenSnakeSegmentsCount = true;
-        //    }
-        //}
+        if (other.CompareTag("CheckSnake") && !isEvenSnakeSegmentsCount)
+        {
+            if (snakeParts.Count % 2 == 0)
+            {
+                gameManager.SnakeSegmentAddToSnake();
+                isEvenSnakeSegmentsCount = true;
+            }
+        }
     }
 
     private void OnTriggerExit(Collider other)

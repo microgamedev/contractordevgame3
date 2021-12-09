@@ -41,7 +41,7 @@ public class EnemyBoss : MonoBehaviour
         if (_bounce)
         {
             rb.AddForce(new Vector3(Random.Range(0.25f, 0.5f), 1f, Random.Range(0.25f, 0.5f)) * 1f, ForceMode.Impulse);
-            Destroy(gameObject, 5f);
+            Destroy(gameObject, 3f);
         }
         else
         {
