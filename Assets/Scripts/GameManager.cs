@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
 
     [Space]
     [SerializeField] private int LoadLevel;
+    public float RoadWidth => 1.5f;
 
     private void Start()
     {

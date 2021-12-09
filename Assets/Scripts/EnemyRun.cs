@@ -1,21 +1,33 @@
+﻿using Dreamteck.Splines;
 using System.Collections;
 using UnityEngine;
 
 public class EnemyRun : MonoBehaviour
 {
+    public enum RunMode
+    {
+        GlobalZ,
+        Spline,
+    }
+
     private float enemyRunSpeed = 4f;
     private Rigidbody rb;
     private Player player;
     private Animator enemyAnimator;
     [SerializeField] GameObject snakeSegmentPrefab;
+    [SerializeField] RunMode runMode;
 
     private bool isDeath = false;
     private bool isRun = false;
+    SplineComputer spline;
+    GameManager manager;
 
     private void Awake()
     {
+        manager = FindObjectOfType<GameManager>();
         player = FindObjectOfType<Player>();
         rb = GetComponent<Rigidbody>();
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
 
         if (GetComponent<Animator>() != null)
         {
@@ -29,6 +41,7 @@ public class EnemyRun : MonoBehaviour
         {
             snakeSegmentPrefab.GetComponent<SnakeSegment>().SnakeSegmentIsInactive(false);
         }
+        spline = manager.splineComputer;
     }
 
     private void FixedUpdate()
@@ -44,17 +57,41 @@ public class EnemyRun : MonoBehaviour
                 ReadyToStop();
             }
         }
-    }
 
-    private void Update()
-    {
         if (isRun && !isDeath)
         {
             Vector3 _forward = new Vector3(0, 0, 1);
             _forward = _forward.normalized * enemyRunSpeed * Time.deltaTime;
-            rb.MovePosition(transform.position + _forward);
+
+            var nextPosition = rb.position + _forward;
+            var splineSample = spline.Project(nextPosition);
+
+            switch (runMode)
+            {
+                case RunMode.GlobalZ:
+                    break;
+                case RunMode.Spline:
+                    var splineDirection = splineSample.forward;
+                    _forward = splineDirection;
+                    splineDirection.y = 0;
+                    transform.forward = splineDirection;
+                    break;
+            }
+
+            float distance = Vector3.Distance(nextPosition, splineSample.position);
+
+            if (distance > manager.RoadWidth)
+            {
+                var correctionDelta = distance - manager.RoadWidth;
+                var correctionVector = (splineSample.position - nextPosition).normalized * correctionDelta;
+                correctionVector.y = 0; // Проверить на холмах
+                nextPosition += correctionVector;
+            }
+
+            rb.MovePosition(nextPosition + _forward);
         }
     }
+
 
     private void ReadyToRun()
     {
