@@ -313,6 +313,11 @@ public class Player : MonoBehaviour
         }
     }
 
+    Plane GetSlicePlane()
+    {
+        return new Plane(transform.up, transform.position);
+    }
+
     public void SliceBamboo(GameObject _bamboo)
     {
         _bamboo.GetComponent<Bamboo>().BambooShowFX();
@@ -320,7 +325,7 @@ public class Player : MonoBehaviour
         coinManager.CoinsAdd(transform.position, 1);
 
         var sliceable = _bamboo.GetComponent<IBzSliceable>();
-        Plane plane = new Plane(transform.up, (-transform.position.y + 0.1f));
+        Plane plane = GetSlicePlane();
         sliceable.Slice(plane, r =>
         {
             if (!r.sliced)
@@ -346,7 +351,7 @@ public class Player : MonoBehaviour
         coinManager.CoinsAdd(transform.position, 3);
 
         var sliceable = _lamp.GetComponent<IBzSliceable>();
-        Plane plane = new Plane(transform.up, transform.position.y + 0.3f);
+        Plane plane = GetSlicePlane();
         sliceable.Slice(plane, r =>
         {
             if (!r.sliced)
@@ -384,7 +389,7 @@ public class Player : MonoBehaviour
         }
 
         var sliceable = enemy.GetComponent<IBzSliceable>();
-        Plane plane = new Plane(transform.up, (-transform.position.y + 0.05f));
+        Plane plane = GetSlicePlane();
         sliceable.Slice(plane, r =>
         {
             if (!r.sliced)
