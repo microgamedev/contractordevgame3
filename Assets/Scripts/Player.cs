@@ -225,11 +225,6 @@ public class Player : MonoBehaviour
                     _count++;
 
                     snakeParts[i].transform.position = Vector3.Lerp(snakeParts[i].transform.position, _tempPos, Time.fixedDeltaTime * playerSpeedPlay);
-
-                    if(isFinishExit)
-                    {
-                        snakeParts[i].transform.rotation = Quaternion.Lerp(snakeParts[i].transform.rotation, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Time.fixedDeltaTime * 20f);
-                    }
                 }
             }
         }
@@ -353,7 +348,10 @@ public class Player : MonoBehaviour
     {
         Lamp lamp = _lamp.GetComponent<Lamp>();
         lamp.LampShowFX();
-        if(lamp.isActive)
+
+        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
+
+        if (lamp.isActive)
         {
             lamp.isActive = false;
         }
