@@ -23,7 +23,11 @@ public class Stone : MonoBehaviour
             GameObject _snakeSegment = Instantiate(snakeSegment);
             _snakeSegment.GetComponent<SnakeSegment>().SnakeSegmentIsInactive(false);
             _snakeSegment.transform.SetParent(transform, false);
-            _snakeSegment.transform.position = other.GetContact(0).point;
+
+            Vector3 _pos = other.GetContact(0).point;
+            _pos.y -= 0.025f;
+            _snakeSegment.transform.position = _pos;
+
             _snakeSegment.transform.rotation = Quaternion.Euler(0,0,0);
 
             gameObject.layer = LayerMask.NameToLayer("NoCollider");

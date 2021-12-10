@@ -30,7 +30,7 @@ public class Player : MonoBehaviour
     private float playerSpeedZ;
     public float playerSpeedPlay = 7.5f;
 
-    private float playerSpeedFinishEnter = 3f;
+    private float playerSpeedFinishEnter = 2f;
     private float playerSpeedFinishExit = 12f;
 
     private float playerTiltAngle = 30f;
@@ -375,8 +375,6 @@ public class Player : MonoBehaviour
 
     public void EnemyKillPlane(GameObject enemy, bool AddSegment, int AddCoins)
     {
-        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
-
         if(AddSegment)
         {
             gameManager.SnakeSegmentAddToSnake();
@@ -427,6 +425,8 @@ public class Player : MonoBehaviour
             }
         }
         );
+
+        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
     }
 
     public void FinishEnter()
