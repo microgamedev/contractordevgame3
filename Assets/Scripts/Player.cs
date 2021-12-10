@@ -20,7 +20,6 @@ public class Player : MonoBehaviour
     [Space]
     [SerializeField] GameObject playerGFX;
     [SerializeField] TextMeshPro snakePartsCountText;
-    [SerializeField] GameObject snakeSegmentPrefab;
 
     private SplineComputer spline;
     [SerializeField] float splineYOffset = 2f; //Сдвиг игрока по Y относительно кривой
@@ -31,7 +30,7 @@ public class Player : MonoBehaviour
     private float playerSpeedZ;
     public float playerSpeedPlay = 7.5f;
 
-    private float playerSpeedFinishEnter = 2f;
+    private float playerSpeedFinishEnter = 3f;
     private float playerSpeedFinishExit = 12f;
 
     private float playerTiltAngle = 30f;
@@ -446,11 +445,6 @@ public class Player : MonoBehaviour
     {
         isFinishExit = true;
         playerSpeedZ = playerSpeedFinishExit;
-
-        if(isEvenSnakeSegmentsCount)
-        {
-            GetComponent<SphereCollider>().enabled = false;
-        }
 
         mainCamera.GetComponent<CameraFollow>().StopFollow();
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
