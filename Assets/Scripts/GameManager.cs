@@ -26,46 +26,35 @@ public class GameManager : MonoBehaviour
     [SerializeField] ParticleSystem snakeFX;
     [SerializeField] GameObject snakeFXText;
 
-    private int _bossCount;
     [HideInInspector] public bool isBossKill = false;
     [HideInInspector] public bool isFirstTouch = false;
 
     private int Level;
+    private int levelLoad;
 
-    [Space]
-    [SerializeField] private int LoadLevel;
     public float RoadWidth => 1.5f;
 
     private void Start()
     {
         Application.targetFrameRate = 60;
 
+        //PlayerPrefs.SetInt("level", 0);
+        //PlayerPrefs.SetInt("coins", 0);
+
         // Level
         Level = PlayerPrefs.GetInt("level");
         if (Level == 0)
         {
             PlayerPrefs.SetInt("level", 1);
+            PlayerPrefs.SetInt("load_level", 1);
             Level = 1;
         }
         levelText.text = "LEVEL " + Level;
 
-        int _levelLoad = Level;
-        if (LoadLevel != 0)
-        {
-            _levelLoad = LoadLevel;
-            levelText.text = "LEVEL " + LoadLevel;
-            Level = LoadLevel;
-        }
-        if (_levelLoad > levelPrefab.Length - 1)
-        {
-            //_levelLoad = Random.Range(2, levelPrefab.Length);
-            _levelLoad = levelPrefab.Length - 1;
-        }
-
-        Instantiate(levelPrefab[_levelLoad]);
-        
-        roadManager.roadPrefab[_levelLoad].SetActive(true);
-        splineComputer = roadManager.roadPrefab[_levelLoad].GetComponent<SplineComputer>();
+        levelLoad = PlayerPrefs.GetInt("load_level");
+        roadManager.roadPrefab[levelLoad].SetActive(true);
+        splineComputer = roadManager.roadPrefab[levelLoad].GetComponent<SplineComputer>();
+        Instantiate(levelPrefab[levelLoad]);
 
         // How To Play
         howToPlay.SetActive(false);
@@ -145,12 +134,14 @@ public class GameManager : MonoBehaviour
 
     public void GameFinish(float positionZ)
     {
-        if(isBossKill)
-        {
-            PlayerPrefs.SetInt("boss", _bossCount + 1);
-        }
-
         PlayerPrefs.SetInt("level", Level + 1);
+
+        int _next_level = levelLoad + 1;
+        if(_next_level == 16)
+        {
+            _next_level = 1;
+        }
+        PlayerPrefs.SetInt("load_level", _next_level);
 
         finalConfettiFX.gameObject.transform.position = new Vector3(0f, 20f, positionZ - 10f);
         finalConfettiFX.Play();
