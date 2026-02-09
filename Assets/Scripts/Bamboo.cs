@@ -1,5 +1,4 @@
 using UnityEngine;
-using Lofelt.NiceVibrations;
 
 public class Bamboo : MonoBehaviour
 {
@@ -27,8 +26,6 @@ public class Bamboo : MonoBehaviour
             rb.isKinematic = false;
             rb.AddTorque(new Vector3(Random.Range(0.25f, 0.5f), Random.Range(0.25f, 0.5f), Random.Range(0.25f, 0.5f)) * 0.5f, ForceMode.Impulse);
             rb.AddForce(new Vector3(Random.Range(0, 0.25f), 1f, Random.Range(0, 0.25f)) * 0.3f, ForceMode.Impulse);
-
-            HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
         }
     }
 }

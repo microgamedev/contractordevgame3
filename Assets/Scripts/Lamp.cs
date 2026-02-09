@@ -1,6 +1,5 @@
 using UnityEngine;
 using DG.Tweening;
-using Lofelt.NiceVibrations;
 
 public class Lamp : MonoBehaviour
 {

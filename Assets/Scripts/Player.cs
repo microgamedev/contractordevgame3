@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using BzKovSoft.ObjectSlicer;
-using Lofelt.NiceVibrations;
 using TMPro;
 using Dreamteck.Splines;
 
@@ -246,7 +244,6 @@ public class Player : MonoBehaviour
 
         ShowSnakeFX();
         ShowSnakeFXText("+1");
-        HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
 
         SnakePartsTextUpdate();
     }
@@ -349,8 +346,6 @@ public class Player : MonoBehaviour
         Lamp lamp = _lamp.GetComponent<Lamp>();
         lamp.LampShowFX();
 
-        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
-
         if (lamp.isActive)
         {
             lamp.isActive = false;
@@ -425,8 +420,7 @@ public class Player : MonoBehaviour
             }
         }
         );
-
-        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
+        
     }
 
     public void FinishEnter()
@@ -436,7 +430,6 @@ public class Player : MonoBehaviour
 
         mainCamera.GetComponent<CameraFollow>().FinishGate();
         SnakePartsTextUpdate();
-        HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
     }
 
     public void FinishExit()
@@ -445,7 +438,6 @@ public class Player : MonoBehaviour
         playerSpeedZ = playerSpeedFinishExit;
 
         mainCamera.GetComponent<CameraFollow>().StopFollow();
-        HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
     }
 
     public void FinishWall()
@@ -456,20 +448,17 @@ public class Player : MonoBehaviour
             snakeParts[i].GetComponentInChildren<MeshRenderer>().enabled = false;
         }
         gameManager.GameFinish(transform.position.z);
-        HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
     }
 
     public void StoneTouch()
     {
         SnakeSegmentRemove();
-        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
         gameManager.SlowMoStart();
     }
 
     public void WoodTouch()
     {
         SnakeSegmentRemove();
-        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
         gameManager.SlowMoStart();
     }
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
-using Lofelt.NiceVibrations;
 using Dreamteck.Splines;
 
 public class GameManager : MonoBehaviour
@@ -152,7 +151,6 @@ public class GameManager : MonoBehaviour
     private IEnumerator GameFinishUI()
     {
         yield return new WaitForSeconds(0.5f);
-        HapticPatterns.PlayPreset(HapticPatterns.PresetType.Success);
 
         UI_Finish.SetActive(true);
     }
